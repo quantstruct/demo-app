@@ -54,10 +54,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   {user && (
                     <>
                       <Link
-                        href="/files"
+                        href="/media"
                         className="py-4 px-6 cursor-pointer hover:bg-slate-100 font-bold"
                       >
-                        Files
+                        Media
                       </Link>
                       <Link
                         href="/chat"

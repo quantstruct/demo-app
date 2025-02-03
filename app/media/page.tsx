@@ -13,7 +13,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
+import { CreateFileModal } from '@/components/ui/CreateFileModal';
 
 export default function FilesPage() {
   const supabase = createClientComponentClient<Database>();
@@ -22,6 +24,8 @@ export default function FilesPage() {
     name: string;
     content: string;
   } | null>(null);
+  const [viewMode, setViewMode] = useState<'preview' | 'source'>('preview');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { data: documents } = useQuery(['files'], async () => {
     const { data, error } = await supabase
@@ -41,32 +45,34 @@ export default function FilesPage() {
 
   return (
     <div className="max-w-6xl m-4 sm:m-10 flex flex-col gap-8 grow items-stretch">
-      <div className="h-40 flex flex-col justify-center items-center border-b pb-8">
-        <Input
-          type="file"
-          name="file"
-          className="cursor-pointer w-full max-w-xs"
-          onChange={async (e) => {
-            const file = e.target.files?.[0];
+      <div className="h-40 flex flex-col justify-center items-center border-b pb-8 gap-4">
+        <div className="flex gap-4">
+          <Input
+            type="file"
+            name="file"
+            className="cursor-pointer w-full max-w-xs"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const { error } = await supabase.storage
+                  .from('files')
+                  .upload(`${crypto.randomUUID()}/${file.name}`, file);
 
-            if (file) {
-              const { error } = await supabase.storage
-                .from('files')
-                .upload(`${crypto.randomUUID()}/${file.name}`, file);
-
-              if (error) {
-                toast({
-                  variant: 'destructive',
-                  description:
-                    'There was an error uploading the file. Please try again.',
-                });
-                return;
+                if (error) {
+                  toast({
+                    variant: 'destructive',
+                    description: 'There was an error uploading the file. Please try again.',
+                  });
+                  return;
+                }
+                router.refresh();
               }
-
-              router.push('/chat');
-            }
-          }}
-        />
+            }}
+          />
+          <Button onClick={() => setIsCreateModalOpen(true)}>
+            Create New
+          </Button>
+        </div>
       </div>
       {documents && (
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -120,13 +126,41 @@ export default function FilesPage() {
       <Dialog open={!!selectedFile} onOpenChange={() => setSelectedFile(null)}>
         <DialogContent className="max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{selectedFile?.name}</DialogTitle>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <DialogTitle>{selectedFile?.name}</DialogTitle>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setViewMode(viewMode === 'preview' ? 'source' : 'preview')
+                  }
+                >
+                  {viewMode === 'preview' ? 'View Source' : 'View Preview'}
+                </Button>
+              </div>
+            </div>
           </DialogHeader>
-          <div className="mt-4 prose prose-slate max-w-none">
-            <ReactMarkdown>{selectedFile?.content || ''}</ReactMarkdown>
+          <div className="mt-4">
+            {viewMode === 'preview' ? (
+              <div className="prose prose-slate max-w-none">
+                <ReactMarkdown>{selectedFile?.content || ''}</ReactMarkdown>
+              </div>
+            ) : (
+              <div className="relative">
+                <pre className="bg-slate-100 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap break-words">
+                  <code className="text-sm">{selectedFile?.content || ''}</code>
+                </pre>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
+
+      <CreateFileModal 
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </div>
   );
 }
