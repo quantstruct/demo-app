@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { Database } from '@/supabase/functions/_lib/database';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
@@ -21,11 +21,14 @@ export default function FilesPage() {
   const supabase = createClientComponentClient<Database>();
   const router = useRouter();
   const [selectedFile, setSelectedFile] = useState<{
+    id: number;
     name: string;
     content: string;
+    storagePath: string;
   } | null>(null);
   const [viewMode, setViewMode] = useState<'preview' | 'source'>('preview');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: documents } = useQuery(['files'], async () => {
     const { data, error } = await supabase
@@ -42,6 +45,55 @@ export default function FilesPage() {
 
     return data;
   });
+
+  const deleteFile = async () => {
+    if (!selectedFile) return;
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${selectedFile.name}"?`
+    );
+    if (!confirmed) return;
+
+    // Then delete from documents table
+    console.log('Deleting document:', selectedFile.id);
+    const { error: dbError, data: deletedData } = await supabase
+      .from('documents')
+      .delete()
+      .eq('id', selectedFile.id)
+
+    console.log('Delete attempt:', {
+      fileId: selectedFile.id,
+      error: dbError,
+      deletedData
+    });
+
+    if (dbError) {
+      console.error('Database delete failed:', dbError);
+      toast({
+        variant: 'destructive',
+        description: `Failed to delete document record: ${dbError.message}`,
+      });
+      return;
+    }
+
+    // Then, delete from storage
+    const { error: storageError } = await supabase.storage
+      .from('files')
+      .remove([selectedFile.storagePath]);
+
+    if (storageError) {
+      console.error('Storage delete failed:', storageError);
+      toast({
+        variant: 'destructive',
+        description: `Failed to delete file from storage: ${storageError.message}`,
+      });
+      return;
+    }
+
+    toast({ description: 'File deleted successfully.' });
+    setSelectedFile(null);
+    queryClient.invalidateQueries(['files']);
+    router.refresh();
+  };
 
   return (
     <div className="max-w-6xl m-4 sm:m-10 flex flex-col gap-8 grow items-stretch">
@@ -103,8 +155,10 @@ export default function FilesPage() {
 
                 const content = await data.text();
                 setSelectedFile({
+                  id: document.id,
                   name: document.name,
                   content,
+                  storagePath: document.storage_object_path,
                 });
               }}
             >
@@ -137,6 +191,9 @@ export default function FilesPage() {
                   }
                 >
                   {viewMode === 'preview' ? 'View Source' : 'View Preview'}
+                </Button>
+                <Button variant="destructive" size="sm" onClick={deleteFile}>
+                  Delete
                 </Button>
               </div>
             </div>
