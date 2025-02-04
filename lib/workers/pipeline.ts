@@ -1,9 +1,9 @@
-import { Pipeline, pipeline } from '@xenova/transformers';
+import { Pipeline, pipeline, PipelineType, AutoProcessor } from '@xenova/transformers';
 import { PipeParameters, PipeReturnType } from '../hooks/use-pipeline';
 
 export type InitEventData = {
   type: 'init';
-  args: Parameters<typeof pipeline>;
+  args: [PipelineType, string | undefined, any];
 };
 
 export type RunEventData = {
@@ -64,8 +64,20 @@ export type OutgoingEventData =
   | ReadyEventData
   | ResultEventData;
 
+// Create a more flexible type for pipeline instances
+type GenericPipeline = {
+  task: string;
+  dispose: () => Promise<void>;
+  (...args: any[]): Promise<any>; // Add call signature
+  [key: string]: any; // Allow any additional methods/properties
+} & Partial<{
+  model: any;
+  tokenizer: any;
+  processor: any;
+}>;
+
 class PipelineSingleton {
-  static instance?: Pipeline;
+  static instance?: GenericPipeline;
 
   static async init(...args: Parameters<typeof pipeline>) {
     this.instance = await pipeline(...args);
