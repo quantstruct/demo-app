@@ -22,6 +22,7 @@ export default function FilesPage() {
   const { toast } = useToast();
   const [fileName, setFileName] = useState('');
   const [fileContent, setFileContent] = useState('');
+  const [selectedContent, setSelectedContent] = useState<string>('');
 
   const handleFileSelect = async (file: { 
     id: number; 
@@ -30,10 +31,7 @@ export default function FilesPage() {
     storagePath: string 
   }, index: number) => {
     setSelectedFileIndex(index);
-    const selectedDoc = documents?.[index];
-    if (selectedDoc) {
-      selectedDoc.content = file.content;
-    }
+    setSelectedContent(file.content);
   };
 
   const handleClose = () => {
@@ -67,7 +65,14 @@ export default function FilesPage() {
     }
   };
 
-  const selectedFile = selectedFileIndex >= 0 ? documents?.[selectedFileIndex] : null;
+  const selectedFile = selectedFileIndex >= 0 && documents?.[selectedFileIndex] 
+    ? {
+        id: documents[selectedFileIndex].id!,
+        name: documents[selectedFileIndex].name!,
+        content: selectedContent,
+        storagePath: documents[selectedFileIndex].storage_object_path!
+      }
+    : null;
 
   return (
     <div className="max-w-6xl m-4 sm:m-10 flex flex-col gap-8 grow items-stretch">

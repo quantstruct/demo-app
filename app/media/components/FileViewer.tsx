@@ -19,11 +19,19 @@ type FileViewerProps = {
     storagePath: string;
   } | null;
   onClose: () => void;
+  onNext: () => void;
+  onPrevious: () => void;
+  hasNext: boolean;
+  hasPrevious: boolean;
 };
 
 export function FileViewer({
   file,
   onClose,
+  onNext,
+  onPrevious,
+  hasNext,
+  hasPrevious,
 }: FileViewerProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState('');
@@ -73,6 +81,22 @@ export function FileViewer({
             <div className="flex items-center gap-2">
               <DialogTitle>{file?.name}</DialogTitle>
               <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onPrevious}
+                  disabled={!hasPrevious}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onNext}
+                  disabled={!hasNext}
+                >
+                  Next
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"
