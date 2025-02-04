@@ -65,12 +65,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                       >
                         Chat
                       </Link>
-                      <Link
+                      {/* <Link
                         href="/logs"
                         className="py-4 px-6 cursor-pointer hover:bg-slate-100 font-bold"
                       >
                         Logs
-                      </Link>
+                      </Link> */}
                     </>
                   )}
                 </div>
