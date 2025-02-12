@@ -1,0 +1,3529 @@
+{
+  "components": {
+    "securitySchemes": {
+      "ApiKey": {
+        "description": "This security scheme requires an API Key to successfully authenticate.",
+        "in": "header",
+        "name": "X-Api-Key",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "ReturnURL": {
+        "type": "string",
+        "format": "uri",
+        "description": "The URL to which the user is redirected at the end of the Hosted Checkout session. We will include the CheckoutSessionID, ExternalID and Status of the session, ie `?CheckoutSessionID={CheckoutSessionID}&ExternalID={ExternalID}&Status={Status}`",
+        "minLength": 10,
+        "maxLength": 1000
+      },
+      "GetPricesResponse": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceItem"
+            },
+            "x-go-type-skip-optional-pointer": true
+          }
+        },
+        "required": ["Items"]
+      },
+      "AccountType": {
+        "type": "string",
+        "example": "Current",
+        "description": "Type of account:\n  * Current"
+      },
+      "GetChannelsResponse": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Channel"
+            },
+            "x-go-type-skip-optional-pointer": true
+          },
+          "PageToken": {
+            "type": "string"
+          }
+        },
+        "required": ["Items"]
+      },
+      "Channel": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string"
+          },
+          "PaymentMethodCategory": {
+            "$ref": "#/components/schemas/PaymentMethodCategory"
+          },
+          "PaymentMethodType": {
+            "$ref": "#/components/schemas/PaymentMethodType"
+          },
+          "FiatCurrency": {
+            "$ref": "#/components/schemas/FiatCurrencyCode"
+          },
+          "Country": {
+            "$ref": "#/components/schemas/CountryCode"
+          },
+          "Calculated": {
+            "$ref": "#/components/schemas/ChannelCalculated",
+            "description": "Calculated price information. Not returned if amount is not provided in the query."
+          },
+          "Limits": {
+            "$ref": "#/components/schemas/ChannelLimits",
+            "description": "Limits for the channel in requested currency."
+          },
+          "Rate": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Rate used for the cryptocurrency being exchanged against the channel fiat currency. Does not include fees. It is not a quoted price and is subject to market fluctuations."
+          },
+          "PaymentMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethodDisplay"
+            },
+            "description": "Recent payment methods for the channel. Only returned if `CustomerID` was provided in the query."
+          },
+          "ProcessingSeconds": {
+            "type": "integer",
+            "description": "The time it takes to process a transaction through the channel",
+            "minimum": 1
+          },
+          "FormSchema": {
+            "$ref": "#/components/schemas/FormSchema",
+            "description": "Form schema which needs to be filled by the customer. If a PaymentMethodID was provided, only the missing fields are displayed in the schema."
+          }
+        },
+        "required": [
+          "ID",
+          "PaymentMethodCategory",
+          "PaymentMethodType",
+          "FiatCurrency",
+          "Country",
+          "Limits",
+          "Rate",
+          "ProcessingSeconds"
+        ]
+      },
+      "ChannelCalculated": {
+        "type": "object",
+        "properties": {
+          "TotalFee": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "The total fee that will be charged for using the specific channel, always specified in the same currency as the requested fiat segment of the transaction."
+          }
+        },
+        "required": ["TotalFee"]
+      },
+      "ChannelLimits": {
+        "type": "object",
+        "properties": {
+          "MinLimit": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "The minimum amount that can be sent through the channel"
+          },
+          "MaxLimit": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "The maximum amount that can be sent through the channel"
+          }
+        },
+        "required": ["MinLimit"]
+      },
+      "ChannelsCountriesResponse": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/FiatCurrencyCode"
+          }
+        },
+        "example": {
+          "AR": ["ARS"],
+          "BR": ["BRL"],
+          "MX": ["MXN"]
+        }
+      },
+      "BalanceResponse": {
+        "type": "object",
+        "properties": {
+          "AccountType": {
+            "$ref": "#/components/schemas/AccountType"
+          },
+          "CryptoCurrency": {
+            "$ref": "#/components/schemas/CryptoCurrencyCode"
+          },
+          "Available": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Amount available to spend."
+          },
+          "Total": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Amount including outflows that have not yet settled."
+          }
+        },
+        "required": ["AccountType", "CryptoCurrency", "Available", "Total"]
+      },
+      "GetBalancesResponse": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BalanceResponse"
+            },
+            "x-go-type-skip-optional-pointer": true
+          },
+          "PageToken": {
+            "type": "string"
+          }
+        },
+        "required": ["Items"]
+      },
+      "ExternalID": {
+        "type": "string",
+        "description": "A unique identifier used in the business system to store a reference for the transaction. This field allows businesses to track and manage transactions within their internal systems.",
+        "minLength": 1,
+        "maxLength": 36
+      },
+      "PaymentMethodID": {
+        "type": "string",
+        "description": "Existing payment method id to be used.",
+        "minLength": 1,
+        "maxLength": 150
+      },
+      "PaymentMethodDisplay": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string"
+          },
+          "PaymentMethodType": {
+            "$ref": "#/components/schemas/PaymentMethodType"
+          },
+          "Details": {
+            "$ref": "#/components/schemas/PaymentMethodDisplayDetails"
+          }
+        },
+        "required": ["ID", "PaymentMethodType", "Details"]
+      },
+      "FiatPaymentMethodBankDisplay": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["FiatPaymentMethodBankDisplay"]
+          },
+          "AccountNumber": {
+            "type": "string"
+          },
+          "BankCode": {
+            "type": "string"
+          }
+        },
+        "required": ["Type"]
+      },
+      "FiatPaymentMethodCardDisplay": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["FiatPaymentMethodCardDisplay"]
+          },
+          "Last4": {
+            "type": "string"
+          },
+          "Scheme": {
+            "$ref": "#/components/schemas/FiatPaymentCardScheme"
+          }
+        },
+        "required": ["Type", "Last4", "Scheme"]
+      },
+      "FiatPaymentRefund": {
+        "type": "object",
+        "properties": {
+          "RefundID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "RefundedAmount": {
+            "$ref": "#/components/schemas/FiatAmount"
+          },
+          "RequestedTime": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/FiatPaymentStatus"
+          }
+        },
+        "required": ["RefundID", "RefundedAmount", "RequestedTime", "Status"]
+      },
+      "SenderPaymentMethod": {
+        "type": "object",
+        "properties": {
+          "FullName": {
+            "type": "string"
+          },
+          "Details": {
+            "$ref": "#/components/schemas/PaymentMethodDisplayDetails"
+          }
+        },
+        "required": ["Details"]
+      },
+      "DepositSourceTriggerConditionInput": {
+        "type": "object",
+        "properties": {
+          "AmountConditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AmountCondition"
+            },
+            "description": "Amount conditions for the rule."
+          },
+          "CryptoCurrency": {
+            "$ref": "#/components/schemas/CryptoCurrencyCode",
+            "description": "Cryptocurrency for the rule.",
+            "example": "USDC"
+          },
+          "Network": {
+            "$ref": "#/components/schemas/Network",
+            "description": "Account-based network (main/sandbox):\n * Ethereum/EthereumTestSepolia\n * PolygonPos/PolygonTestAmoy",
+            "example": "Ethereum"
+          }
+        },
+        "required": ["AmountConditions", "CryptoCurrency", "Network"]
+      },
+      "DepositSourceTriggerCondition": {
+        "type": "object",
+        "properties": {
+          "AmountConditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AmountCondition"
+            },
+            "description": "Amount conditions for the rule."
+          },
+          "CryptoCurrency": {
+            "$ref": "#/components/schemas/CryptoCurrencyCode",
+            "description": "Cryptocurrency for the rule.",
+            "example": "USDC"
+          },
+          "Network": {
+            "$ref": "#/components/schemas/Network",
+            "description": "Account-based network (main/sandbox):\n * Ethereum/EthereumTestSepolia\n * PolygonPos/PolygonTestAmoy",
+            "example": "Ethereum"
+          },
+          "DestinationAddress": {
+            "$ref": "#/components/schemas/DestinationAddress",
+            "description": "The destination address to which the crypto currency should be transferred.",
+            "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+          }
+        },
+        "required": ["AmountConditions", "CryptoCurrency", "Network", "DestinationAddress"]
+      },
+      "AmountCondition": {
+        "type": "object",
+        "properties": {
+          "ComparisonOperator": {
+            "$ref": "#/components/schemas/ComparisonOperator"
+          },
+          "Value": {
+            "$ref": "#/components/schemas/PositiveDecimal"
+          }
+        },
+        "required": ["ComparisonOperator", "Value"]
+      },
+      "FiatPaymentMethodIdentifierDisplay": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["FiatPaymentMethodIdentifierDisplay"]
+          },
+          "IdentifierType": {
+            "$ref": "#/components/schemas/PaymentMethodIdentifierType"
+          },
+          "Identifier": {
+            "type": "string"
+          }
+        },
+        "required": ["Type", "Identifier", "IdentifierType"]
+      },
+      "PaymentMethodDisplayDetails": {
+        "type": "object",
+        "description": "Contains information to display each payment method, with fields tailored to the specific type (e.g., last four digits or account number) to help identify the payment method.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FiatPaymentMethodBankDisplay"
+          },
+          {
+            "$ref": "#/components/schemas/FiatPaymentMethodCardDisplay"
+          },
+          {
+            "$ref": "#/components/schemas/FiatPaymentMethodIdentifierDisplay"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "Type"
+        }
+      },
+      "FiatPaymentCardScheme": {
+        "type": "string",
+        "description": "The card scheme:\n * Mastercard\n * Visa\n",
+        "example": "Visa"
+      },
+      "PaymentMethodIdentifierType": {
+        "type": "string",
+        "description": "Identifier type:\n * PhoneNumber\n * Email\n * TaxID\n",
+        "example": "PhoneNumber"
+      },
+      "PaymentMethod": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string"
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          },
+          "Country": {
+            "$ref": "#/components/schemas/CountryCode"
+          },
+          "PaymentMethodCategory": {
+            "$ref": "#/components/schemas/PaymentMethodCategory"
+          },
+          "DisplayDetails": {
+            "$ref": "#/components/schemas/PaymentMethodDisplayDetails"
+          }
+        },
+        "required": ["ID", "PaymentMethodCategory", "DisplayDetails", "Country"]
+      },
+      "GetPaymentMethodsResponse": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethod"
+            },
+            "x-go-type-skip-optional-pointer": true
+          },
+          "PageToken": {
+            "type": "string"
+          }
+        },
+        "required": ["Items"]
+      },
+      "PriceItem": {
+        "type": "object",
+        "properties": {
+          "PaymentMethodCategory": {
+            "$ref": "#/components/schemas/PaymentMethodCategory"
+          },
+          "Rate": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Rate used to exchange currencies"
+          },
+          "UpdatedAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "TotalFee": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "The total fee that will be charged for using the specific channel, always specified in the same currency as the requested fiat segment of the transaction."
+          },
+          "BusinessFee": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "The fee applied on behalf of the business to customer transactions, always specified in the same currency as the requested fiat segment of the transaction."
+          },
+          "SourceAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal"
+          },
+          "DestinationAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal"
+          },
+          "CryptoFeeBreakdown": {
+            "type": "array",
+            "description": "Total fee amount breakdown in cryptocurrency.",
+            "items": {
+              "$ref": "#/components/schemas/FeeBreakdownItem"
+            },
+            "x-go-type-skip-optional-pointer": true
+          }
+        },
+        "required": ["PaymentMethodCategory", "PaymentMethodType", "Rate", "UpdatedAt"]
+      },
+      "FeeBreakdownItem": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "$ref": "#/components/schemas/FeeBreakdownItemType"
+          },
+          "Amount": {
+            "$ref": "#/components/schemas/PositiveDecimal"
+          }
+        },
+        "required": ["Type", "Amount"]
+      },
+      "FeeBreakdownItemType": {
+        "type": "string",
+        "description": "What fee the items refers to:\n* ChannelFee\n* BusinessFee"
+      },
+      "PrepareSellRequest": {
+        "type": "object",
+        "properties": {
+          "ChannelID": {
+            "$ref": "#/components/schemas/ChannelID"
+          },
+          "PaymentMethodID": {
+            "$ref": "#/components/schemas/PaymentMethodID"
+          },
+          "CryptoCurrency": {
+            "$ref": "#/components/schemas/CryptoCurrencyCode",
+            "description": "Cryptocurrency to sell."
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          },
+          "FiatAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Amount sent to customer's payment method."
+          },
+          "Form": {
+            "$ref": "#/components/schemas/FormInput"
+          },
+          "DelayedSell": {
+            "type": "boolean",
+            "description": "When enabled, balance checks are deferred until the final sell request, allowing the order to be prepared now and executed later."
+          }
+        },
+        "required": ["ChannelID", "CryptoCurrency", "FiatAmount"]
+      },
+      "SellRequest": {
+        "type": "object",
+        "properties": {
+          "CryptoCurrency": {
+            "$ref": "#/components/schemas/CryptoCurrencyCode",
+            "description": "Cryptocurrency to sell."
+          },
+          "FiatAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Amount sent to customer's payment method."
+          },
+          "CryptoAuthorizedAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Maximum amount that can be charged for this transaction."
+          },
+          "FormSessionID": {
+            "$ref": "#/components/schemas/FormSessionID"
+          },
+          "Nonce": {
+            "$ref": "#/components/schemas/Nonce"
+          },
+          "ExternalID": {
+            "$ref": "#/components/schemas/ExternalID"
+          }
+        },
+        "required": [
+          "CryptoAuthorizedAmount",
+          "CryptoCurrency",
+          "FiatAmount",
+          "FormSessionID",
+          "Nonce"
+        ]
+      },
+      "BankDepositToOnchainAddressRequest": {
+        "type": "object",
+        "properties": {
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          },
+          "FiatCurrency": {
+            "$ref": "#/components/schemas/FiatCurrencyCode"
+          },
+          "CryptoCurrency": {
+            "$ref": "#/components/schemas/CryptoCurrencyCode"
+          },
+          "Network": {
+            "$ref": "#/components/schemas/Network"
+          },
+          "DestinationAddress": {
+            "$ref": "#/components/schemas/DestinationAddress",
+            "description": "The final destination address to which the crypto currency should be transferred."
+          }
+        },
+        "required": [
+          "CustomerID",
+          "FiatCurrency",
+          "CryptoCurrency",
+          "Network",
+          "DestinationAddress"
+        ]
+      },
+      "BankDepositToOnchainAddressResponse": {
+        "type": "object",
+        "properties": {
+          "PaymentMethodID": {
+            "$ref": "#/components/schemas/PaymentMethodID"
+          },
+          "PaymentMethodType": {
+            "$ref": "#/components/schemas/PaymentMethodType"
+          },
+          "Reference": {
+            "type": "string"
+          },
+          "AccountNumber": {
+            "type": "string"
+          },
+          "AccountHolderName": {
+            "type": "string"
+          },
+          "BankCode": {
+            "type": "string"
+          },
+          "BankName": {
+            "type": "string"
+          },
+          "BankAddress": {
+            "$ref": "#/components/schemas/StreetAddress"
+          }
+        },
+        "required": ["PaymentMethodID", "PaymentMethodType", "AccountNumber"]
+      },
+      "RuleCreateRequest": {
+        "type": "object",
+        "properties": {
+          "Trigger": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DepositSourceTriggerInput"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "Type"
+            }
+          },
+          "Actions": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/SellActionInput"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "Type"
+              }
+            }
+          },
+          "Expiry": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "Permanent": {
+            "type": "boolean",
+            "description": "If True, a rule can be executed repeatedly. Default is False."
+          },
+          "Nonce": {
+            "$ref": "#/components/schemas/Nonce"
+          }
+        },
+        "required": ["Trigger", "Actions", "Nonce"]
+      },
+      "FormPropertyList": {
+        "type": "object",
+        "additionalProperties": true,
+        "x-go-type-skip-optional-pointer": true,
+        "x-order": 3
+      },
+      "FormSchema": {
+        "description": "JSON schema for the form",
+        "type": "object",
+        "required": ["$schema", "type", "properties"],
+        "properties": {
+          "$schema": {
+            "type": "string",
+            "example": "http://json-schema.org/draft-07/schema#",
+            "x-order": 1
+          },
+          "type": {
+            "type": "string",
+            "example": "object",
+            "x-order": 2
+          },
+          "properties": {
+            "$ref": "#/components/schemas/FormPropertyList"
+          },
+          "required": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "x-go-type-skip-optional-pointer": true,
+            "x-order": 4
+          },
+          "allOf": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "x-go-type-skip-optional-pointer": true,
+            "x-order": 5
+          }
+        }
+      },
+      "GetFormResponse": {
+        "type": "object",
+        "properties": {
+          "FormSchema": {
+            "$ref": "#/components/schemas/FormSchema",
+            "description": "Form schema which needs to be filled by the customer. If no customer input is required, this field is omitted."
+          }
+        }
+      },
+      "FormInput": {
+        "type": "object",
+        "description": "Form input to be submitted based on returned FormSchema",
+        "additionalProperties": true,
+        "x-go-type-skip-optional-pointer": true
+      },
+      "FormSessionID": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Unique identifier for the Form Session. Form Session allows ramping using provided form data."
+      },
+      "SellResponse": {
+        "type": "object",
+        "properties": {
+          "Transaction": {
+            "$ref": "#/components/schemas/Transaction"
+          }
+        },
+        "required": ["Transaction"]
+      },
+      "PrepareSellResponse": {
+        "type": "object",
+        "properties": {
+          "TotalFee": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "The total fee that will be charged for using the specific channel, always specified in the same currency as the requested fiat segment of the transaction."
+          },
+          "CryptoAmountEstimate": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "The estimated amount of cryptocurrency that will be used in this transaction."
+          },
+          "CryptoAuthorizedAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Maximum amount that can be charged for this transaction. This will be used in your subsequent `/transactions/sell` request"
+          },
+          "FormSessionID": {
+            "$ref": "#/components/schemas/FormSessionID"
+          }
+        },
+        "required": ["FormSessionID", "TotalFee", "CryptoAmountEstimate", "CryptoAuthorizedAmount"]
+      },
+      "GetCustomersResponse": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Customer"
+            },
+            "x-go-type-skip-optional-pointer": true
+          },
+          "PageToken": {
+            "type": "string"
+          }
+        },
+        "required": ["Items"]
+      },
+      "GetTransactionsResponse": {
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            },
+            "x-go-type-skip-optional-pointer": true
+          },
+          "PageToken": {
+            "type": "string"
+          }
+        },
+        "required": ["Items"]
+      },
+      "CryptoCurrencyCode": {
+        "type": "string",
+        "description": "Cryptocurrency (main/sandbox):\n * BTC/BTC_TEST\n * USDC/USDC_TEST\n",
+        "example": "BTC"
+      },
+      "FiatCurrencyCode": {
+        "type": "string",
+        "description": "Supported fiat ISO_4217 3 letter currency codes.",
+        "example": "USD"
+      },
+      "CountryCode": {
+        "type": "string",
+        "description": "ISO 3166-1 alpha-2 country code.",
+        "example": "US"
+      },
+      "AssetID": {
+        "type": "string",
+        "example": "USD",
+        "description": "A scalar representing a financial asset code. Suitable for use in cases where exactly one of the currency codes must be provided."
+      },
+      "TransactionStatus": {
+        "type": "string",
+        "enum": ["Pending", "Failed", "Settled"],
+        "description": "Statuses for transactions.",
+        "example": "Settled"
+      },
+      "TransactionDirection": {
+        "type": "string",
+        "description": "Whether the transactions was a credit (in) or a debit (out) in your account",
+        "enum": ["In", "Out"],
+        "example": "In"
+      },
+      "PositiveDecimal": {
+        "type": "string",
+        "example": "10.1",
+        "minLength": 1,
+        "maxLength": 38,
+        "pattern": "^[+]?([.]\\d+|\\d+[.]?\\d*)$"
+      },
+      "Network": {
+        "type": "string",
+        "description": "Payments network (main/sandbox):\n * Bitcoin/BitcoinTest\n * Lightning/LightningTest\n * Ethereum/EthereumTestSepolia\n * PolygonPos/PolygonTestAmoy\n * Solana/SolanaDevnet\n * OffNetwork/OffNetwork\n",
+        "example": "Bitcoin"
+      },
+      "Nonce": {
+        "type": "string",
+        "description": "A string which must be unique each time a new transaction is created, like a UUID or operation sequence number. Request can be idempotently retried by using the same Nonce.",
+        "example": "dc879b38-494b-4de7-98a9-068703144328",
+        "minLength": 1,
+        "maxLength": 36
+      },
+      "PaymentMethodCategory": {
+        "type": "string",
+        "description": "Categorizes one or more `PaymentMethodType`s into broader groups. Useful for listing channels, displaying payment methods:\n * Bank\n * Card\n * Identifier\n",
+        "example": "Bank"
+      },
+      "PaymentMethodType": {
+        "type": "string",
+        "description": "Specific type of payment method:\n * BankSepa\n * BankLocal\n * BankFedwire\n * TokenizedCard\n * IdentifierPix\n",
+        "example": "BankLocal"
+      },
+      "Address": {
+        "type": "string",
+        "example": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4",
+        "description": "Address for transfer"
+      },
+      "DestinationAddress": {
+        "type": "object",
+        "properties": {
+          "Address": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        "description": "A destination address to transfer cryptocurrency",
+        "required": ["Address"]
+      },
+      "Date": {
+        "type": "string",
+        "format": "date",
+        "example": "2024-04-16",
+        "minLength": 10,
+        "maxLength": 10
+      },
+      "DateTime": {
+        "type": "string",
+        "format": "date-time",
+        "example": "2024-04-16T08:00:55Z"
+      },
+      "FiatAmount": {
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "$ref": "#/components/schemas/PositiveDecimal"
+          },
+          "FiatCurrency": {
+            "$ref": "#/components/schemas/FiatCurrencyCode"
+          }
+        },
+        "required": ["Amount", "FiatCurrency"]
+      },
+      "FiatPaymentStatus": {
+        "type": "string",
+        "enum": ["Pending", "Failed", "Successful"],
+        "example": "Successful"
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "format": "uuid",
+            "description": "NOAH's unique identifier for the transaction."
+          },
+          "PublicID": {
+            "type": "string",
+            "description": "The public blockchain transaction id or hash. This identifier is only available for transactions that are broadcast to a public network as well as some private networks where available, e.g. Lightning"
+          },
+          "Network": {
+            "$ref": "#/components/schemas/Network"
+          },
+          "Created": {
+            "$ref": "#/components/schemas/DateTime",
+            "description": "When was this transaction created"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/TransactionStatus"
+          },
+          "Direction": {
+            "$ref": "#/components/schemas/TransactionDirection"
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          },
+          "ExternalID": {
+            "$ref": "#/components/schemas/ExternalID"
+          },
+          "Amount": {
+            "description": "The net crypto amount transacted, affecting the balance. This amount **excludes** the `NetworkFee`. For buy transactions, this is the amount after payment fees. For sell transactions, this is the amount before payment fees.",
+            "$ref": "#/components/schemas/PositiveDecimal"
+          },
+          "NetworkFee": {
+            "description": "Amount paid to cover the the onchain network or gas fee associated with the transaction, if applicable.",
+            "$ref": "#/components/schemas/PositiveDecimal"
+          },
+          "CryptoCurrency": {
+            "$ref": "#/components/schemas/CryptoCurrencyCode"
+          },
+          "FiatPayment": {
+            "description": " * For buy transactions, `Transaction.Amount = (FiatPayment.Amount - FiatPayment.FeeAmount) / FiatPayment.Rate`\n * For sell transactions, `Transaction.Amount = (FiatPayment.Amount + FiatPayment.FeeAmount) / FiatPayment.Rate`\n",
+            "$ref": "#/components/schemas/FiatPayment"
+          },
+          "Orchestration": {
+            "description": "Orchestration details for the transaction.",
+            "$ref": "#/components/schemas/TransactionOrchestration"
+          },
+          "FiatPaymentMethod": {
+            "description": "Information about the fiat payment method used to facilitate this transaction.",
+            "$ref": "#/components/schemas/PaymentMethod"
+          },
+          "Breakdown": {
+            "type": "array",
+            "description": "This list explains how the transaction amount was calculated.",
+            "items": {
+              "$ref": "#/components/schemas/TransactionBreakdownItem"
+            },
+            "x-go-type-skip-optional-pointer": true
+          }
+        },
+        "required": ["ID", "Network", "Created", "Status", "Direction", "CryptoCurrency"]
+      },
+      "TransactionBreakdownItem": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "$ref": "#/components/schemas/TransactionBreakdownType"
+          },
+          "Amount": {
+            "$ref": "#/components/schemas/PositiveDecimal"
+          }
+        },
+        "required": ["Type", "Amount"]
+      },
+      "TransactionBreakdownType": {
+        "type": "string",
+        "description": "What does the breakdown item amount refer to:\n* ChannelFee: amount withheld by the system from the fiat payment\n* BusinessFee: amount to withheld on behalf of the business over its customers transactions\n* Remaining: amount withheld by the system from the fiat payment"
+      },
+      "Customer": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/IndividualCustomer"
+          },
+          {
+            "$ref": "#/components/schemas/BusinessCustomer"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "Type",
+          "mapping": {
+            "Individual": "#/components/schemas/IndividualCustomer",
+            "Business": "#/components/schemas/BusinessCustomer"
+          }
+        }
+      },
+      "IndividualCustomer": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["Individual"]
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          },
+          "Created": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "DateOfBirth": {
+            "$ref": "#/components/schemas/Date"
+          },
+          "FullName": {
+            "$ref": "#/components/schemas/FullName"
+          },
+          "Identities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerIdentity"
+            },
+            "x-go-type-skip-optional-pointer": true
+          },
+          "PrimaryResidence": {
+            "$ref": "#/components/schemas/StreetAddress"
+          }
+        },
+        "required": [
+          "Type",
+          "CustomerID",
+          "Created",
+          "DateOfBirth",
+          "FullName",
+          "Identities",
+          "PrimaryResidence"
+        ]
+      },
+      "BusinessCustomer": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["Business"]
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          },
+          "Created": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "RegisteredName": {
+            "type": "string",
+            "description": "Name of the business."
+          },
+          "RegistrationNumber": {
+            "type": "string",
+            "description": "Registration number of the business."
+          },
+          "RegistrationCountry": {
+            "type": "string",
+            "description": "Registration country of the business."
+          },
+          "RegisteredAddress": {
+            "$ref": "#/components/schemas/StreetAddress"
+          },
+          "IncorporationDate": {
+            "$ref": "#/components/schemas/Date"
+          }
+        },
+        "required": ["Type", "CustomerID", "Created", "RegisteredName"]
+      },
+      "FiatPayment": {
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "description": "The final amount that has been debited (for buy transactions) or credited (for sell transactions) from the payment method.",
+            "$ref": "#/components/schemas/PositiveDecimal"
+          },
+          "FeeAmount": {
+            "description": "The fee applied to this payment.",
+            "$ref": "#/components/schemas/PositiveDecimal"
+          },
+          "Rate": {
+            "description": "Crypto/Fiat exchange rate.",
+            "$ref": "#/components/schemas/PositiveDecimal"
+          },
+          "FiatCurrency": {
+            "description": "The currency related to the amounts.",
+            "$ref": "#/components/schemas/FiatCurrencyCode"
+          },
+          "FiatDepositID": {
+            "description": "The ID of the deposit when the payment originated from a deposit.",
+            "type": "string"
+          }
+        },
+        "required": ["Amount", "FeeAmount", "FiatCurrency"]
+      },
+      "ChannelID": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Unique identifier for the channel.",
+        "minLength": 36,
+        "maxLength": 36
+      },
+      "IDType": {
+        "type": "string",
+        "description": "Type of identification document:\n * DrivingLicense\n * NationalIDCard\n * Passport\n * AddressProof\n * ResidencePermit\n * TaxID\n",
+        "example": "Passport"
+      },
+      "FullName": {
+        "type": "object",
+        "properties": {
+          "FirstName": {
+            "type": "string",
+            "description": "user's first name",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "LastName": {
+            "type": "string",
+            "description": "user's last name (family name)",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "MiddleName": {
+            "type": "string",
+            "description": "user's middle name",
+            "minLength": 1,
+            "maxLength": 50
+          }
+        },
+        "required": ["FirstName", "LastName"]
+      },
+      "StreetAddress": {
+        "type": "object",
+        "properties": {
+          "Street": {
+            "type": "string",
+            "description": "Street: the primary name of an address's street.",
+            "minLength": 2,
+            "maxLength": 200
+          },
+          "Street2": {
+            "type": "string",
+            "description": "Street2: the secondary name of an address's street."
+          },
+          "City": {
+            "type": "string",
+            "description": "City: name of an address's city or town.",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "PostCode": {
+            "type": "string",
+            "description": "PostCode: the address's postcode",
+            "minLength": 1,
+            "maxLength": 20
+          },
+          "State": {
+            "type": "string",
+            "description": "State: the address's state / province / county. For USA and Canada, state code in ISO 3166-2 code (e.g. CA) is required.",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "Country": {
+            "$ref": "#/components/schemas/CountryCode"
+          }
+        },
+        "required": ["Street", "City", "PostCode", "State", "Country"]
+      },
+      "CustomerIdentity": {
+        "type": "object",
+        "properties": {
+          "IssuingCountry": {
+            "$ref": "#/components/schemas/CountryCode",
+            "description": "Issuing country of the identity, ISO 3166-1 alpha-2 country code."
+          },
+          "IDNumber": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+          },
+          "IssuedDate": {
+            "$ref": "#/components/schemas/Date"
+          },
+          "ExpiryDate": {
+            "$ref": "#/components/schemas/Date"
+          },
+          "IDType": {
+            "$ref": "#/components/schemas/IDType"
+          }
+        },
+        "required": ["IssuingCountry", "IDNumber", "IDType"]
+      },
+      "SortDirection": {
+        "type": "string",
+        "enum": ["ASC", "DESC"],
+        "description": "Direction of sorting",
+        "example": "DESC"
+      },
+      "ErrorType": {
+        "type": "string",
+        "description": "Type of error:\n* InvalidMessage\n* Unexpected\n* ResourceNotFound\n* Unauthorized\n* Forbidden\n* InsufficientBalance\n",
+        "example": "InvalidMessage"
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "$ref": "#/components/schemas/ErrorType"
+          },
+          "Instance": {
+            "type": "string",
+            "description": "A unique reference that identifies the specific occurrence of the problem"
+          },
+          "Action": {
+            "type": "string",
+            "description": "Action taking place which resulted in error."
+          },
+          "Detail": {
+            "type": "string",
+            "description": "Details about the error."
+          },
+          "Extensions": {
+            "$ref": "#/components/schemas/ErrorExtensions"
+          }
+        }
+      },
+      "ErrorExtensions": {
+        "type": "object",
+        "description": "Additional information about the error.",
+        "properties": {
+          "Request": {
+            "type": "object",
+            "description": "Details about invalid request properties.",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "Features": {
+            "$ref": "#/components/schemas/ErrorExtensionFeatures"
+          }
+        }
+      },
+      "ErrorExtensionFeatures": {
+        "type": "object",
+        "description": "Details about the disabled feature flags",
+        "additionalProperties": {
+          "description": "List of reasons",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Type of reason:\n* BetaAccess\n* GloballyDisabled\n* Maintenance\n* RestrictedRegion\n* Kyc\n* Suspended"
+          }
+        },
+        "x-go-type-skip-optional-pointer": true
+      },
+      "CustomerID": {
+        "type": "string",
+        "description": "A unique ID which identifies the customer in the Business' internal system and in NOAH.",
+        "example": "550e8400-e29b-41d4-a716-446655440000",
+        "minLength": 1,
+        "maxLength": 36
+      },
+      "CustomerInput": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/IndividualCustomerInput"
+          },
+          {
+            "$ref": "#/components/schemas/BusinessCustomerInput"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "Type",
+          "mapping": {
+            "Business": "#/components/schemas/BusinessCustomerInput",
+            "Individual": "#/components/schemas/IndividualCustomerInput"
+          }
+        }
+      },
+      "IndividualCustomerInput": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["Individual"]
+          },
+          "FullName": {
+            "$ref": "#/components/schemas/FullName"
+          },
+          "DateOfBirth": {
+            "$ref": "#/components/schemas/Date"
+          },
+          "Email": {
+            "type": "string",
+            "format": "email",
+            "description": "Customer's email address."
+          },
+          "PhoneNumber": {
+            "type": "string",
+            "pattern": "^\\+[0-9]{6,15}$",
+            "description": "Customer's phone number."
+          },
+          "Identities": {
+            "type": "array",
+            "x-go-type-skip-optional-pointer": true,
+            "items": {
+              "$ref": "#/components/schemas/CustomerIdentity"
+            }
+          },
+          "PrimaryResidence": {
+            "$ref": "#/components/schemas/StreetAddress"
+          }
+        },
+        "required": ["Type", "FullName", "DateOfBirth", "Identities", "PrimaryResidence"]
+      },
+      "BusinessCustomerInput": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["Business"]
+          },
+          "RegisteredName": {
+            "type": "string",
+            "description": "Name of the business."
+          },
+          "RegistrationNumber": {
+            "type": "string",
+            "description": "Registration number of the business."
+          },
+          "RegistrationCountry": {
+            "type": "string",
+            "description": "Registration country of the business."
+          },
+          "RegisteredAddress": {
+            "$ref": "#/components/schemas/StreetAddress"
+          },
+          "IncorporationDate": {
+            "$ref": "#/components/schemas/Date"
+          }
+        },
+        "required": [
+          "Type",
+          "RegistrationNumber",
+          "RegistrationCountry",
+          "RegisteredAddress",
+          "IncorporationDate",
+          "RegisteredName"
+        ]
+      },
+      "CheckoutBuySellResponse": {
+        "type": "object",
+        "properties": {
+          "HostedURL": {
+            "type": "string",
+            "format": "uri",
+            "description": "Hosted URL to redirect the user to fulfil the payment."
+          },
+          "Transaction": {
+            "$ref": "#/components/schemas/Transaction"
+          }
+        },
+        "required": ["HostedURL", "Transaction"]
+      },
+      "CheckoutManageRequest": {
+        "type": "object",
+        "properties": {
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          },
+          "Customer": {
+            "$ref": "#/components/schemas/CustomerInput"
+          }
+        },
+        "required": ["CustomerID"]
+      },
+      "CheckoutSession": {
+        "type": "object",
+        "properties": {
+          "CheckoutSessionID": {
+            "type": "string",
+            "description": "Unique ID of session."
+          },
+          "PaymentMethodCategory": {
+            "$ref": "#/components/schemas/PaymentMethodCategory"
+          },
+          "SourceCurrency": {
+            "$ref": "#/components/schemas/AssetID"
+          },
+          "DestinationCurrency": {
+            "$ref": "#/components/schemas/AssetID"
+          },
+          "SourceAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal"
+          },
+          "DestinationAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal"
+          },
+          "AuthorizedAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Maximum amount that can be charged for this transaction."
+          },
+          "Status": {
+            "type": "string",
+            "description": "Status of CheckoutSession:\n* Pending\n* Failed\n* Settled\n\nNote: other statuses could be added in the future"
+          },
+          "ExternalID": {
+            "type": "string",
+            "description": "Unique identifier in user's system."
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          },
+          "ReturnURL": {
+            "$ref": "#/components/schemas/ReturnURL"
+          },
+          "LineItems": {
+            "$ref": "#/components/schemas/LineItems"
+          },
+          "Expiry": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Time the checkout expires (example: 2020-01-01T00:00:00Z)"
+          },
+          "Created": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Time the checkout was created (example: 2020-01-01T00:00:00Z)"
+          }
+        },
+        "required": [
+          "CheckoutSessionID",
+          "CustomerID",
+          "Status",
+          "Created",
+          "ReturnURL",
+          "SourceCurrency",
+          "DestinationCurrency",
+          "LineItems"
+        ]
+      },
+      "CheckoutManageResponse": {
+        "type": "object",
+        "properties": {
+          "HostedURL": {
+            "type": "string",
+            "format": "uri",
+            "description": "Hosted URL to redirect the user to manage their payment methods."
+          }
+        },
+        "required": ["HostedURL"]
+      },
+      "LineItem": {
+        "type": "object",
+        "properties": {
+          "Description": {
+            "type": "string",
+            "description": "Description of the line item.",
+            "minLength": 1,
+            "maxLength": 140
+          },
+          "Quantity": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Quantity of the line item. Must be greater than zero."
+          },
+          "UnitAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Amount of a single unit of the line item. Must be in the same currency as the transaction."
+          },
+          "TotalAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Total amount of the line item (UnitAmount * Quantity). Must be in the same currency as the transaction."
+          }
+        },
+        "required": ["Description", "Quantity", "UnitAmount", "TotalAmount"]
+      },
+      "LineItems": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/LineItem"
+        },
+        "minItems": 1,
+        "maxItems": 120
+      },
+      "Webhook": {
+        "type": "object",
+        "properties": {
+          "EventType": {
+            "type": "string",
+            "description": "Type of the event being sent:\n * Transaction\n * FiatDeposit\n * CheckoutSession\n"
+          },
+          "EventVersion": {
+            "type": "integer",
+            "description": "Version of the event",
+            "example": 0
+          },
+          "Occurred": {
+            "$ref": "#/components/schemas/DateTime",
+            "description": "Time the event occurred"
+          },
+          "Data": {
+            "type": "object",
+            "description": "Data specific to the event.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Transaction"
+              },
+              {
+                "$ref": "#/components/schemas/FiatDeposit"
+              },
+              {
+                "$ref": "#/components/schemas/CheckoutSession"
+              }
+            ]
+          },
+          "UserID": {
+            "type": "string",
+            "description": "User ID of the event."
+          }
+        },
+        "required": ["EventType", "EventVersion", "Occurred", "Data", "UserID"]
+      },
+      "StepDecimalOperation": {
+        "type": "object",
+        "properties": {
+          "Operator": {
+            "type": "string",
+            "enum": ["Add", "Sub", "Mul"]
+          },
+          "Value": {
+            "type": "string",
+            "example": "../Value",
+            "description": "Decimal or output reference."
+          }
+        },
+        "required": ["Operator", "Value"]
+      },
+      "StepDecimal": {
+        "type": "object",
+        "description": "Select a fixed amount, an input or a decimal operation with the two",
+        "properties": {
+          "Value": {
+            "type": "string",
+            "example": "../Amount",
+            "description": "Decimal or output reference."
+          },
+          "Operations": {
+            "type": "array",
+            "description": "Operations are applied to `StepDecimal.Value` in the order they appear in the array.",
+            "items": {
+              "$ref": "#/components/schemas/StepDecimalOperation"
+            },
+            "x-go-type-skip-optional-pointer": true
+          }
+        },
+        "required": ["Value"]
+      },
+      "ComparisonOperator": {
+        "type": "string",
+        "enum": ["EQ", "LTEQ", "GTEQ"],
+        "description": "Comparison operator for the field value:\n * EQ (Equals)\n * LTEQ (Less Than Or Equals)\n * GTEQ (Greater Than Or Equals)\n"
+      },
+      "DepositDestinationTrigger": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["DepositDestinationTrigger"]
+          },
+          "Amount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Amount deposited"
+          },
+          "CryptoCurrency": {
+            "$ref": "#/components/schemas/CryptoCurrencyCode",
+            "description": "Cryptocurrency to sell."
+          },
+          "Network": {
+            "$ref": "#/components/schemas/Network",
+            "description": "UTXO network:(main/sandbox):\n * Bitcoin/BitcoinTest"
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          },
+          "RefundAddress": {
+            "$ref": "#/components/schemas/DestinationAddress",
+            "description": "Address for refunds in case actions were not executed successfully."
+          },
+          "DepositAddress": {
+            "$ref": "#/components/schemas/DestinationAddress",
+            "description": "Address generated for the deposit trigger."
+          }
+        },
+        "required": ["Type", "Amount", "CryptoCurrency", "DepositAddress"]
+      },
+      "DepositDestinationTriggerInput": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["DepositDestinationTriggerInput"]
+          },
+          "Amount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "Amount deposited"
+          },
+          "CryptoCurrency": {
+            "$ref": "#/components/schemas/CryptoCurrencyCode",
+            "description": "Cryptocurrency to sell."
+          },
+          "Network": {
+            "$ref": "#/components/schemas/Network",
+            "description": "UTXO network(main/sandbox):\n * Bitcoin/BitcoinTest\n"
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          },
+          "RefundAddress": {
+            "$ref": "#/components/schemas/DestinationAddress",
+            "description": "Address for refunds in case actions were not executed successfully."
+          },
+          "DepositAddress": {
+            "$ref": "#/components/schemas/DestinationAddress",
+            "description": "Address generated for the deposit trigger."
+          }
+        },
+        "required": ["Type", "Amount", "CryptoCurrency", "DepositAddress", "RefundAddress"]
+      },
+      "DepositSourceTrigger": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["DepositSourceTrigger"]
+          },
+          "Conditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepositSourceTriggerCondition"
+            },
+            "description": "Conditions that trigger the rule."
+          },
+          "SourceAddress": {
+            "$ref": "#/components/schemas/Address",
+            "description": "Address in depositor's custody from which the deposit was made.",
+            "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          }
+        },
+        "required": ["Type", "Conditions", "SourceAddress", "CustomerID"]
+      },
+      "DepositSourceTriggerInput": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["DepositSourceTriggerInput"]
+          },
+          "Conditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepositSourceTriggerConditionInput"
+            },
+            "description": "Conditions that trigger the rule."
+          },
+          "SourceAddress": {
+            "$ref": "#/components/schemas/Address",
+            "description": "Address in depositor's custody from which the deposit was made.",
+            "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID"
+          }
+        },
+        "required": ["Type", "Conditions", "SourceAddress", "CustomerID"]
+      },
+      "SellActionInput": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": ["SellActionInput"]
+          },
+          "CryptoCurrency": {
+            "type": "string",
+            "example": "../CryptoCurrency",
+            "description": "Cryptocurrency code or output reference."
+          },
+          "CryptoAuthorizedAmount": {
+            "$ref": "#/components/schemas/StepDecimal",
+            "description": "Maximum amount that can be charged for this transaction."
+          },
+          "FiatAmount": {
+            "$ref": "#/components/schemas/StepDecimal",
+            "description": "Amount sent to customer's payment method."
+          },
+          "FormSessionID": {
+            "$ref": "#/components/schemas/FormSessionID"
+          },
+          "ExternalID": {
+            "$ref": "#/components/schemas/ExternalID"
+          }
+        },
+        "required": [
+          "Type",
+          "CryptoCurrency",
+          "CryptoAuthorizedAmount",
+          "FiatAmount",
+          "FormSessionID"
+        ]
+      },
+      "Rule": {
+        "type": "object",
+        "properties": {
+          "Trigger": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DepositDestinationTrigger"
+              },
+              {
+                "$ref": "#/components/schemas/DepositSourceTrigger"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "Type"
+            }
+          },
+          "ID": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": ["ID", "Trigger"]
+      },
+      "FiatDepositSimulateRequest": {
+        "type": "object",
+        "properties": {
+          "PaymentMethodID": {
+            "$ref": "#/components/schemas/PaymentMethodID"
+          },
+          "FiatAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "The amount of the deposit."
+          },
+          "FiatCurrency": {
+            "$ref": "#/components/schemas/FiatCurrencyCode"
+          }
+        },
+        "required": ["PaymentMethodID", "FiatAmount", "FiatCurrency"]
+      },
+      "FiatDepositSimulateResponse": {
+        "type": "object",
+        "properties": {
+          "FiatDepositID": {
+            "type": "string"
+          }
+        },
+        "required": ["FiatDepositID"]
+      },
+      "TransactionOrchestration": {
+        "type": "object",
+        "properties": {
+          "RuleID": {
+            "type": "string",
+            "description": "Unique identifier for the rule that is matched for the transaction."
+          },
+          "RuleExecutionID": {
+            "type": "string",
+            "description": "Unique identifier for the execution of the rules that is matched for the transaction."
+          }
+        },
+        "description": "Orchestration details for the transaction.",
+        "required": ["RuleID", "RuleExecutionID"]
+      },
+      "FiatDeposit": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "description": "Unique identifier of the fiat deposit."
+          },
+          "Created": {
+            "$ref": "#/components/schemas/DateTime",
+            "description": "When was this fiat deposit created."
+          },
+          "FiatAmount": {
+            "$ref": "#/components/schemas/PositiveDecimal",
+            "description": "The amount of the deposit."
+          },
+          "FiatCurrency": {
+            "$ref": "#/components/schemas/FiatCurrencyCode",
+            "description": "The currency of the deposit."
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Reference of the deposit."
+          },
+          "Status": {
+            "$ref": "#/components/schemas/FiatDepositStatus",
+            "description": "Status of the deposit."
+          },
+          "CustomerID": {
+            "$ref": "#/components/schemas/CustomerID",
+            "description": "Customer ID of the deposit."
+          },
+          "PaymentMethodID": {
+            "$ref": "#/components/schemas/PaymentMethodID",
+            "description": "Identifier of the payment method that received the deposit."
+          },
+          "PaymentMethodType": {
+            "$ref": "#/components/schemas/PaymentMethodType"
+          },
+          "Sender": {
+            "$ref": "#/components/schemas/SenderPaymentMethod",
+            "description": "Sender's fiat payment method."
+          },
+          "Refunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FiatPaymentRefund"
+            },
+            "description": "Fiat deposit refunds if any exists"
+          }
+        },
+        "description": "Details of a fiat deposit received by NOAH.",
+        "required": [
+          "ID",
+          "Created",
+          "FiatAmount",
+          "FiatCurrency",
+          "Status",
+          "Sender",
+          "PaymentMethodID",
+          "PaymentMethodType",
+          "Refunds"
+        ]
+      },
+      "FiatDepositStatus": {
+        "type": "string",
+        "enum": ["Pending", "Failed", "Settled"],
+        "description": "Statuses for a FiatDeposit.",
+        "example": "Settled"
+      }
+    },
+    "callbacks": {
+      "PaymentCallback": {
+        "/": {
+          "post": {
+            "summary": "Payment status update notification",
+            "description": "Send a callback to the specified URL when the payment status updates.",
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Webhook"
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Callback received successfully"
+              }
+            },
+            "parameters": [
+              {
+                "in": "header",
+                "name": "Webhook-Signature",
+                "required": true,
+                "description": "Digital signature generated by the sender",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/balances": {
+      "get": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "example": "10",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "PageSize"
+            }
+          },
+          {
+            "name": "PageToken",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "PageToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of balances",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBalancesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Balances",
+        "description": "Retrieve all balances for the Business User's account.",
+        "tags": ["Balances"]
+      }
+    },
+    "/beta1/rule": {
+      "post": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created rule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rule"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create a rule",
+        "description": "Create a rule used to create automated responses to events.",
+        "tags": ["Orchestration"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RuleCreateRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channels/{ChannelID}/form": {
+      "get": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ChannelID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ChannelID"
+            }
+          },
+          {
+            "name": "PaymentMethodID",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PaymentMethodID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment method form schema",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFormResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Dynamic Form",
+        "description": "This endpoint provides a [JSONForm](https://jsonforms.io/) schema needed to configure payment methods for transactions on a specified channel. Use this schema to dynamically generate forms based on the selected payment method. The `ChannelID` parameter, obtainable from the Supported Channels endpoint, specifies the target channel for which the form is generated.\n\n**Note:** It is not possible to fetch schemas for channels where the `PaymentMethodType` is set to `TokenizedCard`, as the API does not directly accept credit card details. For credit card payments, please refer to the [Hosted Checkout](../hosted-checkout/introduction) solution.",
+        "tags": ["Channels"]
+      }
+    },
+    "/channels/sell": {
+      "get": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Country",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/CountryCode"
+            }
+          },
+          {
+            "name": "CryptoCurrency",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/CryptoCurrencyCode"
+            }
+          },
+          {
+            "name": "FiatCurrency",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/FiatCurrencyCode"
+            }
+          },
+          {
+            "name": "FiatAmount",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PositiveDecimal"
+            }
+          },
+          {
+            "name": "CustomerID",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/CustomerID"
+            }
+          },
+          {
+            "name": "PaymentMethodID",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PaymentMethodID"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "example": "10",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "PageSize"
+            }
+          },
+          {
+            "name": "PageToken",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "PageToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of channels",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetChannelsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Supported Channels",
+        "description": "List of supported channels for selling crypto into fiat.",
+        "tags": ["Channels"]
+      }
+    },
+    "/channels/sell/countries": {
+      "get": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of countries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelsCountriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Supported Countries",
+        "description": "Retrieve a complete list of countries where sell operations are supported. The response is useful for enabling customers to select their desired Country+FiatCurrency combination for receiving payouts. After making a selection, obtain the channels for the chosen Country+FiatCurrency using `GET /channels/sell`",
+        "tags": ["Channels"]
+      }
+    },
+    "/checkout/accept-crypto": {
+      "post": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Checkout request created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "HostedURL": {
+                      "type": "string",
+                      "description": "URL to redirect the customer to the checkout page."
+                    },
+                    "CheckoutSession": {
+                      "$ref": "#/components/schemas/CheckoutSession"
+                    }
+                  },
+                  "required": ["HostedURL", "CheckoutSession"]
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Accept Crypto",
+        "description": "Accept a crypto payment for a checkout session.",
+        "tags": ["Checkout Sessions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "CryptoCurrency": {
+                    "$ref": "#/components/schemas/CryptoCurrencyCode"
+                  },
+                  "CryptoAmount": {
+                    "$ref": "#/components/schemas/PositiveDecimal"
+                  },
+                  "ReturnURL": {
+                    "$ref": "#/components/schemas/ReturnURL"
+                  },
+                  "ExternalID": {
+                    "$ref": "#/components/schemas/ExternalID"
+                  },
+                  "CustomerID": {
+                    "$ref": "#/components/schemas/CustomerID",
+                    "description": "Identifies the customer in user's system"
+                  },
+                  "Customer": {
+                    "$ref": "#/components/schemas/CustomerInput"
+                  },
+                  "LineItems": {
+                    "$ref": "#/components/schemas/LineItems",
+                    "description": "List of line items that your customer is purchasing using this Hosted Checkout Session. This is used for display purposes for the customer during Checkout as well as remediation of disputed payments. We do not make any calculations using this data."
+                  },
+                  "Nonce": {
+                    "$ref": "#/components/schemas/Nonce"
+                  }
+                },
+                "required": [
+                  "CryptoCurrency",
+                  "CryptoAmount",
+                  "CustomerID",
+                  "ReturnURL",
+                  "LineItems",
+                  "Nonce"
+                ]
+              }
+            }
+          }
+        },
+        "callbacks": {
+          "Status Update": {
+            "$ref": "#/components/callbacks/PaymentCallback"
+          }
+        }
+      }
+    },
+    "/checkout/buy": {
+      "post": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Checkout request created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutBuySellResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create Buy",
+        "description": "Create a Hosted Checkout session to enable a customer to onramp to your platform using the NOAH Hosted Checkout page.\n\n If the `Customer` object is provided, the customer will be upserted. If the `Customer` object is not provided, the `CustomerID` should refer to an existing customer.",
+        "tags": ["Checkout Sessions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "PaymentMethodCategory": {
+                    "$ref": "#/components/schemas/PaymentMethodCategory"
+                  },
+                  "FiatCurrency": {
+                    "$ref": "#/components/schemas/FiatCurrencyCode"
+                  },
+                  "CryptoCurrency": {
+                    "$ref": "#/components/schemas/CryptoCurrencyCode"
+                  },
+                  "FiatAmount": {
+                    "$ref": "#/components/schemas/PositiveDecimal"
+                  },
+                  "ReturnURL": {
+                    "$ref": "#/components/schemas/ReturnURL"
+                  },
+                  "ExternalID": {
+                    "$ref": "#/components/schemas/ExternalID"
+                  },
+                  "CustomerID": {
+                    "$ref": "#/components/schemas/CustomerID",
+                    "description": "Identifies the customer in business' system"
+                  },
+                  "Customer": {
+                    "$ref": "#/components/schemas/CustomerInput"
+                  },
+                  "LineItems": {
+                    "$ref": "#/components/schemas/LineItems",
+                    "description": "List of line items that your customer is purchasing using this Hosted Checkout Session. This is used for display purposes for the customer during Checkout as well as remediation of disputed payments. We do not make any calculations using this data."
+                  },
+                  "Nonce": {
+                    "$ref": "#/components/schemas/Nonce"
+                  }
+                },
+                "required": [
+                  "PaymentMethodCategory",
+                  "CryptoCurrency",
+                  "FiatCurrency",
+                  "FiatAmount",
+                  "CustomerID",
+                  "ReturnURL",
+                  "LineItems",
+                  "Nonce"
+                ]
+              }
+            }
+          }
+        },
+        "callbacks": {
+          "Status Update": {
+            "$ref": "#/components/callbacks/PaymentCallback"
+          }
+        }
+      }
+    },
+    "/checkout/manage": {
+      "post": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Checkout manage response includes a link to redirect the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutManageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create Managed Session",
+        "description": "Create a session that allows the customer to create, update or delete their payment methods. \n\n If the `Customer` object is provided, the customer will be upserted. If the `Customer` object is not provided, the `CustomerID` should refer to an existing customer.",
+        "tags": ["Checkout Sessions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutManageRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkout/sell": {
+      "post": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Checkout request created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutBuySellResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create Sell",
+        "description": "Create a Hosted Checkout session to enable a customer to offramp from your platform using the NOAH Hosted Checkout page.",
+        "tags": ["Checkout Sessions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "CryptoCurrency": {
+                    "$ref": "#/components/schemas/CryptoCurrencyCode"
+                  },
+                  "FiatCurrency": {
+                    "$ref": "#/components/schemas/FiatCurrencyCode"
+                  },
+                  "FiatAmount": {
+                    "$ref": "#/components/schemas/PositiveDecimal"
+                  },
+                  "CryptoAuthorizedAmount": {
+                    "$ref": "#/components/schemas/PositiveDecimal",
+                    "description": "Maximum amount that can be charged for this transaction."
+                  },
+                  "ReturnURL": {
+                    "$ref": "#/components/schemas/ReturnURL"
+                  },
+                  "ExternalID": {
+                    "$ref": "#/components/schemas/ExternalID"
+                  },
+                  "CustomerID": {
+                    "$ref": "#/components/schemas/CustomerID",
+                    "description": "Identifies the customer in business' system"
+                  },
+                  "Customer": {
+                    "$ref": "#/components/schemas/CustomerInput"
+                  },
+                  "LineItems": {
+                    "$ref": "#/components/schemas/LineItems",
+                    "description": "List of line items that your customer is selling using this Hosted Checkout Session. This is used for display purposes for the customer during Checkout as well as remediation of disputed payments."
+                  },
+                  "Nonce": {
+                    "$ref": "#/components/schemas/Nonce"
+                  }
+                },
+                "required": [
+                  "CryptoCurrency",
+                  "FiatCurrency",
+                  "FiatAmount",
+                  "CryptoAuthorizedAmount",
+                  "CustomerID",
+                  "ReturnURL",
+                  "LineItems",
+                  "Nonce"
+                ]
+              }
+            }
+          }
+        },
+        "callbacks": {
+          "Status Update": {
+            "$ref": "#/components/callbacks/PaymentCallback"
+          }
+        }
+      }
+    },
+    "/customers": {
+      "get": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "example": "10",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "PageSize"
+            }
+          },
+          {
+            "name": "PageToken",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "PageToken"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/SortDirection",
+              "default": "DESC"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "SortDirection"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of customers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCustomersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Customers",
+        "description": "Retrieve paginated customers for your account.",
+        "tags": ["Customers"]
+      }
+    },
+    "/customers/{CustomerID}": {
+      "put": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "CustomerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/CustomerID"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Customer created"
+          },
+          "204": {
+            "description": "Customer updated"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Put Customer",
+        "description": "Creates or updates a customer record. A unique `CustomerID` must be provided, as the API does not generate this identifier. For consistency, it is recommended to use the customer ID from your internal system as the `CustomerID`. This customer record must exist before executing any operations that depend on the `CustomerID`.",
+        "tags": ["Customers"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerInput"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Customer by ID",
+        "description": "Retrieve details of a specific customer by their CustomerID.",
+        "tags": ["Customers"],
+        "parameters": [
+          {
+            "name": "CustomerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/CustomerID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-methods": {
+      "get": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "CustomerID",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/CustomerID"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "example": "10",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "PageSize"
+            }
+          },
+          {
+            "name": "PageToken",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "PageToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of fiat payment methods",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentMethodsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Payment Methods",
+        "description": "Retrieves a list of payment methods for a specific customer.",
+        "tags": ["Payment Methods"]
+      }
+    },
+    "/prices": {
+      "get": {
+        "parameters": [
+          {
+            "name": "SourceCurrency",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/AssetID"
+            }
+          },
+          {
+            "name": "DestinationCurrency",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/AssetID"
+            }
+          },
+          {
+            "name": "SourceAmount",
+            "in": "query",
+            "description": "Only one of `SourceAmount` or `DestinationAmount` can be defined. When this amount is specified, the response `DestinationAmount` field indicates how much you will get for this, after the deduction of any fees.",
+            "schema": {
+              "$ref": "#/components/schemas/PositiveDecimal"
+            }
+          },
+          {
+            "name": "DestinationAmount",
+            "in": "query",
+            "description": "Only one of `SourceAmount` or `DestinationAmount` can be defined. When this amount is specified, the response `SourceAmount` field indicates how much you will need to sell to get this and cover any fees.",
+            "schema": {
+              "$ref": "#/components/schemas/PositiveDecimal"
+            }
+          },
+          {
+            "name": "PaymentMethodCategory",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PaymentMethodCategory"
+            }
+          },
+          {
+            "name": "Country",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/CountryCode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Price estimate successful. Response includes the rate of currency exchange before and after fees are subtracted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPricesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Prices",
+        "description": "Allows you to retrieve real-time information about a conversion between two supported currencies, including the rate before and after the NOAH Fee is applied. During a NOAH Hosted Checkout session, real-time ‘/prices’ data is used to calculate the fees and thus the final amount a customer will pay. In case neither SourceAmount or DestinationAmount is defined the fee is not available.\n",
+        "tags": ["Prices"]
+      }
+    },
+    "/sandbox/fiat-deposit/simulate": {
+      "post": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fiat deposit created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FiatDepositSimulateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create a test fiat-deposit.",
+        "description": "Only available in sandbox environment.\nA fiat deposit will be created towards a fiat payment method. This could trigger webhooks, worklows or rules that you have previously setup.",
+        "tags": ["Sandbox"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FiatDepositSimulateRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "example": "10",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "PageSize"
+            }
+          },
+          {
+            "name": "PageToken",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "PageToken"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/SortDirection",
+              "default": "DESC"
+            },
+            "x-oapi-codegen-extra-tags": {
+              "schema": "SortDirection"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTransactionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Transactions",
+        "description": "Retrieves a paginated list of transaction history for your account.",
+        "tags": ["Transactions"]
+      }
+    },
+    "/transactions/{TransactionID}": {
+      "get": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "TransactionID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Transaction by ID",
+        "description": "Retrieve the details of a single transaction by `TransactionID`.",
+        "tags": ["Transactions"]
+      }
+    },
+    "/transactions/sell": {
+      "post": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Sell request successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Create Sell Transaction",
+        "description": "Initiate a transaction to sell the specified cryptocurrency and send the requested fiat currency to the specified payout method. Allows for sending form data to submit a payment method.",
+        "tags": ["Transactions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SellRequest"
+              }
+            }
+          }
+        },
+        "callbacks": {
+          "Status Update": {
+            "$ref": "#/components/callbacks/PaymentCallback"
+          }
+        }
+      }
+    },
+    "/transactions/sell/prepare": {
+      "post": {
+        "parameters": [
+          {
+            "description": "Digitally signed JWT.",
+            "in": "header",
+            "name": "Api-Signature",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sell request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrepareSellResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Client is not authorized to perform this action"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Prepare Sell Transaction",
+        "description": "Calculates the inputs required for the Sell endpoint, intended to be used as a preliminary step for validating transaction details before execution. This allows the business to review estimated fees and limits prior to initiating the actual sell transaction.",
+        "tags": ["Transactions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareSellRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflows/bank-deposit-to-onchain-address": {
+      "post": {
+        "summary": "Bank deposit to onchain address",
+        "description": "This endpoint sets up workflow which automatically converts fiat currency from bank deposits into cryptocurrency and sends the acquired crypto to the specified wallet address on the specified network. The workflow will be triggered automatically and indefinitely whenever a bank transfer is made to the bank account described in the response. The deposited amount will be traded for the specified cryptocurrency at the current market price after application of fees.\n **Important**: \n * On-chain operations are irreversible\n * Market prices may fluctuate significantly, impacting the final amount of cryptocurrency sent\n * Although this endpoint should return the same bank details for the same customer we can't guarantee the longevity of those details. For this reason, every time you need to present the customer with the bank deposit details, you should use this endpoint to get them. If the customer reuses the bank details after they become invalid the transfer will fail and money will NOT be lost.",
+        "tags": ["Workflows"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankDepositToOnchainAddressRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created rule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankDepositToOnchainAddressResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKey": []
+    }
+  ],
+  "servers": [
+    {
+      "description": "V1 Sandbox Server",
+      "url": "https://api.sandbox.noah.com/v1"
+    },
+    {
+      "description": "V1 Production Server",
+      "url": "https://api.noah.com/v1"
+    }
+  ],
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NOAH Business API",
+    "version": "0.1.3",
+    "description": "The NOAH Business API is organised around REST, using resource-oriented URLs. It accepts JSON-encoded request bodies and returns JSON-encoded responses. All our endpoints follow REST conventions and use standard HTTP response codes, authentication and methods.\n\nPlease follow the links in the navigation to find out more about each resource and endpoint.\n\nOur full OpenApi v3 Schema can be exported using the button above."
+  },
+  "tags": [
+    {
+      "name": "Balances",
+      "description": "Resources that are related to Balances."
+    },
+    {
+      "name": "Sandbox",
+      "description": "Resources that are related to Sandbox."
+    },
+    {
+      "name": "Channels",
+      "description": "Resources that are related to Channels."
+    },
+    {
+      "name": "Checkout Sessions",
+      "description": "Resources that are related to our Hosted Checkout product."
+    },
+    {
+      "name": "Customers",
+      "description": "Resources that are related to Customers."
+    },
+    {
+      "name": "Payment Methods",
+      "description": "Resources that are related to Payment Methods."
+    },
+    {
+      "name": "Prices",
+      "description": "Resources that are related to Prices."
+    },
+    {
+      "name": "Orchestration",
+      "description": "Resources that are related to Orchestration."
+    },
+    {
+      "name": "Workflows",
+      "description": "Resources that are related to Workflows."
+    },
+    {
+      "name": "Transactions",
+      "description": "Resources that are related to transactions."
+    }
+  ]
+}
