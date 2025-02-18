@@ -1,0 +1,3288 @@
+{
+	"info": {
+		"_postman_id": "36bd0edb-e894-4010-9c55-fcd8f09cbc19",
+		"name": "jambonz API",
+		"description": "The jambonz account-level REST API allows a user to create and manage calls, applications, speech credentials, carriers, and other resources that are associated with their account.\n\n## Authentication\nThe API uses Bearer authentication; i.e., a bearer token that must be provided in the Authorization header, e.g.\n\n`Authorization: Bearer 'your-api-token'`\n\nYou can generate an api token for your account in the hosted portal.\n\n## HTTP response codes\n\n- POST requests will return a 201 status on success and a JSON payload that includes a `sid` property referencing the unique identifier of the resource that has been created.\n- UPDATE and DELETE requests will return a 204 status on success with no body\n- GET requests will return a 200 response with a JSON payload\n\n## API version\n\nThe current version of the api is v1.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34519149"
+	},
+	"item": [
+		{
+			"name": "v1",
+			"item": [
+				{
+					"name": "Alerts",
+					"item": [
+						{
+							"name": "Get Alerts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/Alerts?page=1&count=25&days=7",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"Alerts"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "25"
+										},
+										{
+											"key": "days",
+											"value": "7"
+										}
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "3e2c138a-8940-4804-bb4f-b2de70a91697"
+										}
+									]
+								},
+								"description": "Alerts are only kept in the system for seven days.  As there could be a large number of alerts, the api allows you to query pages of data at a time."
+							},
+							"response": [
+								{
+									"name": "Get Alerts",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Alerts?page=1&count=25&days=7",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Alerts"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "1"
+												},
+												{
+													"key": "count",
+													"value": "25"
+												},
+												{
+													"key": "days",
+													"value": "7"
+												}
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 11:59:52 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "306"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"132-0X6WZ56ZBLlg4n2/cc9Hpo+Ewvo\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"total\": 1,\n    \"page_size\": \"25\",\n    \"page\": \"1\",\n    \"data\": [\n        {\n            \"time\": \"2021-05-30T11:57:57.582346789Z\",\n            \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n            \"alert_type\": \"webhook-connection-failure\",\n            \"detail\": \"getaddrinfo ENOTFOUND public-apps\",\n            \"message\": \"failed to connect to https://public-apps/jambonz.us/call-status\"\n        }\n    ]\n}"
+								}
+							]
+						}
+					],
+					"description": "Alerts are generated when some element of your configuration is not working properly; for instance, if you have configured a webhook that is unreachable, or you try to use a speech service without having configured speech credentials."
+				},
+				{
+					"name": "Applications",
+					"item": [
+						{
+							"name": "Get Applications",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Applications",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Applications"
+									]
+								},
+								"description": "Retrieve the applications that have been created for this account"
+							},
+							"response": [
+								{
+									"name": "GET Applications",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Applications",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Applications"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 27 May 2021 23:43:38 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "4268"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"10ac-G+/hdD2cQvXaKA8E/Tu1xP6q+5M\""
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"application_sid\": \"98acd50a-9f25-42a6-8dbf-aadb400ddcf0\",\n        \"name\": \"dial time clock\",\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"speech_synthesis_vendor\": \"google\",\n        \"speech_synthesis_language\": \"en-US\",\n        \"speech_synthesis_voice\": \"en-US-Standard-C\",\n        \"speech_recognizer_vendor\": \"google\",\n        \"speech_recognizer_language\": \"en-US\",\n        \"created_at\": \"2021-05-25T03:06:21.000Z\",\n        \"call_hook\": {\n            \"webhook_sid\": \"30a3232d-e4f2-4c90-af83-fb32c31fa17d\",\n            \"url\": \"https://public-apps.jambonz.us/dial-time\",\n            \"method\": \"POST\",\n            \"username\": null,\n            \"password\": null\n        },\n        \"call_status_hook\": {\n            \"webhook_sid\": \"c20a825e-2ce7-4c10-8c95-fb4d83d30506\",\n            \"url\": \"https://public-apps.jambonz.us/call-status\",\n            \"method\": \"POST\",\n            \"username\": null,\n            \"password\": null\n        },\n        \"messaging_hook\": {\n            \"webhook_sid\": \"5832639b-d8a9-4334-b039-b088dea19ee3\",\n            \"url\": \"\",\n            \"method\": \"POST\",\n            \"username\": null,\n            \"password\": null\n        }\n    },\n    {\n        \"application_sid\": \"9b747b6c-7a3d-490e-af0b-95939982f369\",\n        \"name\": \"dial-o-rama\",\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"speech_synthesis_vendor\": \"google\",\n        \"speech_synthesis_language\": \"en-US\",\n        \"speech_synthesis_voice\": \"en-US-Wavenet-C\",\n        \"speech_recognizer_vendor\": \"google\",\n        \"speech_recognizer_language\": \"en-US\",\n        \"created_at\": \"2021-05-08T16:59:06.000Z\",\n        \"call_hook\": {\n            \"webhook_sid\": \"5a7bfa6a-a897-4ba0-bd55-cd7c239a9df0\",\n            \"url\": \"https://9519e2c6b589.ngrok.io/dial-o-rama/collect\",\n            \"method\": \"POST\",\n            \"username\": null,\n            \"password\": null\n        },\n        \"call_status_hook\": {\n            \"webhook_sid\": \"7ad5e589-d161-4b4c-b513-3c597c099fb3\",\n            \"url\": \"https://9519e2c6b589.ngrok.io/call-status\",\n            \"method\": \"POST\",\n            \"username\": null,\n            \"password\": null\n        },\n        \"messaging_hook\": {\n            \"webhook_sid\": \"e38681ce-b11d-48c0-a844-19b304d13a79\",\n            \"url\": \"\",\n            \"method\": \"POST\",\n            \"username\": null,\n            \"password\": null\n        }\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Get Application",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Applications/:application_sid",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Applications",
+										":application_sid"
+									],
+									"variable": [
+										{
+											"key": "application_sid",
+											"value": "98acd50a-9f25-42a6-8dbf-aadb400ddcf0"
+										}
+									]
+								},
+								"description": "Retrieve a specific application by its unique identifier"
+							},
+							"response": [
+								{
+									"name": "Get Application",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Applications/:application_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Applications",
+												":application_sid"
+											],
+											"variable": [
+												{
+													"key": "application_sid",
+													"value": "98acd50a-9f25-42a6-8dbf-aadb400ddcf0"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 27 May 2021 23:19:52 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "860"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"35c-jYiXkrRkYNAXLvbpn4I0KG+aigM\""
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"application_sid\": \"98acd50a-9f25-42a6-8dbf-aadb400ddcf0\",\n        \"name\": \"dial time clock\",\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"speech_synthesis_vendor\": \"google\",\n        \"speech_synthesis_language\": \"en-US\",\n        \"speech_synthesis_voice\": \"en-US-Standard-C\",\n        \"speech_recognizer_vendor\": \"google\",\n        \"speech_recognizer_language\": \"en-US\",\n        \"created_at\": \"2021-05-25T03:06:21.000Z\",\n        \"call_hook\": {\n            \"webhook_sid\": \"30a3232d-e4f2-4c90-af83-fb32c31fa17d\",\n            \"url\": \"https://public-apps.jambonz.us/dial-time\",\n            \"method\": \"POST\",\n            \"username\": null,\n            \"password\": null\n        },\n        \"call_status_hook\": {\n            \"webhook_sid\": \"c20a825e-2ce7-4c10-8c95-fb4d83d30506\",\n            \"url\": \"https://public-apps.jambonz.us/call-status\",\n            \"method\": \"POST\",\n            \"username\": null,\n            \"password\": null\n        },\n        \"messaging_hook\": {\n            \"webhook_sid\": \"5832639b-d8a9-4334-b039-b088dea19ee3\",\n            \"url\": \"\",\n            \"method\": \"POST\",\n            \"username\": null,\n            \"password\": null\n        }\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Create Application",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"my test app\",\n\t\"account_sid\": \"{{account_sid}}\",\n\t\"call_hook\": {\n\t\t\"url\": \"https://public-apps.jambonz.us/hello-world\",\n\t\t\"method\": \"POST\"\n\t},\n\t\"call_status_hook\": {\n\t\t\"url\": \"https://public-apps.jambonz.us/call-status\",\n\t\t\"method\": \"POST\"\n\t},\n\t\"speech_synthesis_vendor\": \"google\",\n\t\"speech_synthesis_language\": \"en-US\",\n\t\"speech_synthesis_voice\": \"en-US-Standard-C\",\n\t\"speech_recognizer_vendor\": \"google\",\n\t\"speech_recognizer_language\": \"en-US\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/Applications",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Applications"
+									]
+								},
+								"description": "Create an application, specifying webhook URLs and speech settings.  \n\nSuccess is indicated by a 201 response containing a json body with a property \"sid\" that identifies the application_sid that was created."
+							},
+							"response": [
+								{
+									"name": "Create Application",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"name\": \"my test app\",\n\t\"account_sid\": \"{{account_sid}}\",\n\t\"call_hook\": {\n\t\t\"url\": \"https://public-apps.jambonz.us/hello-world\",\n\t\t\"method\": \"POST\"\n\t},\n\t\"call_status_hook\": {\n\t\t\"url\": \"https://public-apps.jambonz.us/call-status\",\n\t\t\"method\": \"POST\"\n\t},\n\t\"speech_synthesis_vendor\": \"google\",\n\t\"speech_synthesis_language\": \"en-US\",\n\t\"speech_synthesis_voice\": \"en-US-Standard-C\",\n\t\"speech_recognizer_vendor\": \"google\",\n\t\"speech_recognizer_language\": \"en-US\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Applications",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Applications"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 27 May 2021 23:26:33 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "46"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2e-tVmlvHvMsB1ps4hLTc+Y+8vMfl4\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sid\": \"bd66b946-0af4-4283-b972-d0d4b0d6f088\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Application",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"dial-o-rama\",\n\t\"account_sid\": \"{{account_sid}}\",\n\t\"call_hook\": {\n\t\t\"url\": \"https://9519e2c6b589.ngrok.io/dial-o-rama/collect\",\n\t\t\"method\": \"POST\",\n\t\t\"username\": null,\n\t\t\"password\": null\n\t},\n\t\"call_status_hook\": {\n\t\t\"url\": \"https://9519e2c6b589.ngrok.io/call-status\",\n\t\t\"method\": \"POST\",\n\t\t\"username\": null,\n\t\t\"password\": null\n\t},\n\t\"messaging_hook\": {\n\t\t\"url\": \"\",\n\t\t\"method\": \"POST\",\n\t\t\"username\": null,\n\t\t\"password\": null\n\t},\n\t\"speech_synthesis_vendor\": \"google\",\n\t\"speech_synthesis_language\": \"en-GB\",\n\t\"speech_synthesis_voice\": \"en-GB-Standard-A\",\n\t\"speech_recognizer_vendor\": \"google\",\n\t\"speech_recognizer_language\": \"en-US\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/Applications/:application_sid",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Applications",
+										":application_sid"
+									],
+									"variable": [
+										{
+											"key": "application_sid",
+											"value": "9b747b6c-7a3d-490e-af0b-95939982f369"
+										}
+									]
+								},
+								"description": "Update the properties of an application.\n\nSuccess is indicated by a 204 response."
+							},
+							"response": [
+								{
+									"name": "Update Application",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"name\": \"dial-o-rama\",\n\t\"account_sid\": \"{{account_sid}}\",\n\t\"call_hook\": {\n\t\t\"url\": \"https://9519e2c6b589.ngrok.io/dial-o-rama/collect\",\n\t\t\"method\": \"POST\",\n\t\t\"username\": null,\n\t\t\"password\": null\n\t},\n\t\"call_status_hook\": {\n\t\t\"url\": \"https://9519e2c6b589.ngrok.io/call-status\",\n\t\t\"method\": \"POST\",\n\t\t\"username\": null,\n\t\t\"password\": null\n\t},\n\t\"messaging_hook\": {\n\t\t\"url\": \"\",\n\t\t\"method\": \"POST\",\n\t\t\"username\": null,\n\t\t\"password\": null\n\t},\n\t\"speech_synthesis_vendor\": \"google\",\n\t\"speech_synthesis_language\": \"en-GB\",\n\t\"speech_synthesis_voice\": \"en-GB-Standard-A\",\n\t\"speech_recognizer_vendor\": \"google\",\n\t\"speech_recognizer_language\": \"en-US\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Applications/:application_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Applications",
+												":application_sid"
+											],
+											"variable": [
+												{
+													"key": "application_sid",
+													"value": "9b747b6c-7a3d-490e-af0b-95939982f369"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 28 May 2021 01:44:53 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": null
+								}
+							]
+						},
+						{
+							"name": "Delete Application",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Applications/:application_sid",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Applications",
+										":application_sid"
+									],
+									"variable": [
+										{
+											"key": "application_sid",
+											"value": "bd66b946-0af4-4283-b972-d0d4b0d6f088"
+										}
+									]
+								},
+								"description": "Deletes an application.\n\nSuccess is indicated by a 204 response\n\n> Note: an application can not be deleted if it is referenced by a phone number or a  carrier."
+							},
+							"response": [
+								{
+									"name": "Delete Application",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Applications/:application_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Applications",
+												":application_sid"
+											],
+											"variable": [
+												{
+													"key": "application_sid",
+													"value": "bd66b946-0af4-4283-b972-d0d4b0d6f088"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 27 May 2021 23:28:43 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"a-bAsFyilMr4Ra1hIU5PyoyFRunpI\""
+										}
+									],
+									"cookie": [],
+									"body": null
+								}
+							]
+						}
+					],
+					"description": "Applications represent the call handling rules to be applied to voice calls either made or received by the platform. Applications can be created, queried, updated, and destroyed via the API.\n\nApplications have the following properties:\n\n|property|description|\n|--------|-----------|\n|account_sid|identifies the Account this application belongs to|\n|application_sid|unique identifier for the application|\n|name|user-specified name of application|\n|call_hook|web callback to invoke for new calls|\n|call_status_hook|web callback to invoke for call status notifications|\n|speech_recognizer_vendor|vendor to use for speech recognition. Default: google|\n|speech_recognizer_language|default language to use for speech recognition, if not specified in the 'gather' or 'transcribe' verbs. Default: en-US|\n|speech_synthesis_vendor|vendor to use for text to speech. Default: google|\n|speech_synthesis_voice|default voice to use for text to speech, if not specified in the 'say' verb. Default: en-US-Wavenet-C|"
+				},
+				{
+					"name": "Calls",
+					"item": [
+						{
+							"name": "Get Calls",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"Calls"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										}
+									]
+								},
+								"description": "Retrieve a list of calls for the account that are in progress or recently ended.\n\n> Note: calls that have ended more than ten minutes ago will not be returned."
+							},
+							"response": [
+								{
+									"name": "Get Calls",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:22:24 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1387"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"56b-K1Nv66FWh7KNoOLyI/oAhrzxpHI\""
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"service_url\": \"http://172.31.32.144:3000\",\n        \"direction\": \"outbound\",\n        \"caller_name\": \"\",\n        \"call_sid\": \"a4941f23-66b8-4b52-b495-94192adee7ec\",\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"call_status\": \"completed\",\n        \"call_id\": \"a173fe94-3be1-123a-28b2-0efdfb356c0d\",\n        \"sip_status\": 200,\n        \"from\": \"15083728299\",\n        \"to\": \"15083084809\",\n        \"duration\": 5\n    },\n    {\n        \"service_url\": \"http://172.31.32.144:3000\",\n        \"direction\": \"outbound\",\n        \"caller_name\": \"\",\n        \"call_sid\": \"6b4931df-436a-4bfe-864e-3513d2917c02\",\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"application_sid\": \"9984fdc5-89ec-4ffe-9cee-880255a46253\",\n        \"call_status\": \"completed\",\n        \"call_id\": \"7ed07f1e-3be0-123a-28b2-0efdfb356c0d\",\n        \"sip_status\": 200,\n        \"from\": \"15083728299\",\n        \"to\": \"15083084809\",\n        \"duration\": 16\n    },\n    {\n        \"service_url\": \"http://172.31.32.144:3000\",\n        \"direction\": \"outbound\",\n        \"caller_name\": \"\",\n        \"call_sid\": \"65d1cefe-c21a-4f03-92c0-947d6a17fe01\",\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"call_status\": \"completed\",\n        \"call_id\": \"6f7c2d1c-3be1-123a-28b2-0efdfb356c0d\",\n        \"sip_status\": 200,\n        \"from\": \"15083728299\",\n        \"to\": \"15083084809\",\n        \"duration\": 5\n    },\n    {\n        \"service_url\": \"http://172.31.32.144:3000\",\n        \"direction\": \"outbound\",\n        \"caller_name\": \"\",\n        \"call_sid\": \"8f0eb6f4-85d9-40c7-84a8-a7a8228f9816\",\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"call_status\": \"completed\",\n        \"call_id\": \"13f2f4b9-3be1-123a-28b2-0efdfb356c0d\",\n        \"sip_status\": 200,\n        \"from\": \"15083728299\",\n        \"to\": \"15083084809\",\n        \"duration\": 0\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Get Call",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"Calls",
+										":call_sid"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										},
+										{
+											"key": "call_sid",
+											"value": "e1577b29-3609-4d83-9ddd-8bd7f965b53c"
+										}
+									]
+								},
+								"description": "Retrieve information about a specific call in progress, or one that has recently ended (within the past ten minutes)."
+							},
+							"response": [
+								{
+									"name": "Get Call",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "e1577b29-3609-4d83-9ddd-8bd7f965b53c"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 13:16:42 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "468"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"1d4-/LHMvBUwerwwcr3NnIeixHzo30I\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"service_url\": \"http://172.31.32.144:3000\",\n    \"direction\": \"inbound\",\n    \"caller_name\": \"\",\n    \"call_sid\": \"e1577b29-3609-4d83-9ddd-8bd7f965b53c\",\n    \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n    \"application_sid\": \"98acd50a-9f25-42a6-8dbf-aadb400ddcf0\",\n    \"from\": \"+15083084809\",\n    \"to\": \"+15083728299\",\n    \"call_id\": \"24f6442d-3be6-123a-dc86-0e72d4e3c899\",\n    \"sip_status\": 200,\n    \"call_status\": \"completed\",\n    \"originating_sip_ip\": \"54.172.60.2:5060\",\n    \"originating_sip_trunk_name\": \"Twilio\",\n    \"duration\": 57\n}"
+								}
+							]
+						},
+						{
+							"name": "Create call (version 1)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"application_sid\": \"77deb55a-4c44-496b-8623-bcb98a166acc\",\n    \"from\": \"441514533212\",\n    \"to\": {\n        \"type\": \"user\",\n        \"name\": \"daveh@sip.jambonz.me\"\n    },\n    \"amd\": {\n        \"actionHook\": \"https://webhook.site/847b1ef2-a62d-415e-bf70-199b9ef97b68\"\n    },\n    \"timeout\": 30000\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"Calls"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "9351f46a-678c-43f5-b8a6-d4eb58d131af"
+										}
+									]
+								},
+								"description": "Generate an outbound call. When the call is answered, the specified webhook will be invoked to manage the call.\n\nIn this version of the createCall api you specify the application_sid identifier of the jambonz application that you want to be invoked on this call.\n\nThe following properties may be provided in the body of the request:\n\n| option | description | required |\n| --- | --- | --- |\n| application_sid | the application to invoke when the call is answered | yes |\n| from | The calling party phone number. | yes |\n| to | The [destination](https://www.jambonz.org/docs/webhooks/dial/#target-types) to dial.| yes |\n| actionHook | webhook to invoke when the call ends. The webhook will include [properties](https://www.jambonz.org/docs/webhooks/dial/#dial-action-properties) describing the outcome of the call attempt. | no |\n| amd | enable answering machine detection; see [answering machine detection](https://www.jambonz.org/docs/supporting-articles/answering-machine-detection) for details | no |\n| confirmHook | webhook for an application to run on the callee's end after the dialed number answers but before the call is connected. This allows the caller to provide information to the dialed number, giving them the opportunity to decline the call, before they answer the call. | no |\n| dtmfCapture | an array of strings that represent dtmf sequence which, when detected, will trigger a mid-call notification to the application via the configured `dtmfHook` | no |\n| dtmfHook | a webhook to call when a dtmfCapture entry is matched. This is a notification only -- no response is expected, and any desired actions must be carried out via the REST updateCall API. | no |\n| headers | an object containing arbitrary sip headers to apply to the outbound call attempt(s) | no |\n| listen | a nested [listen](https://www.jambonz.org/docs/webhooks/listen) action, which will cause audio from the call to be streamed to a remote server over a websocket connection | no |\n| referHook | webhook to invoke when an incoming SIP REFER is received on a dialed call. If the application wishes to accept and process the REFER, the webhook application should simply return an HTTP status code 200 with no body, and jambonz will send a SIP 202 Accepted. Otherwise, any HTTP non-success status will cause jambonz to send a SIP response to the REFER with the same status code.  <br>  <br>Note that jambonz will send the 202 Accepted and do nothing further. It is the responsibility of the third-party application to then outdial a new call and bridge the other leg, presumably by using the REST API. | no |\n| tag | an object containing key-pairs of metadata that will be attached to this call, as per the [tag verb](https://www.jambonz.org/docs/webhooks/transcribe)| no|\n| timeLimit | max length of call in seconds | no |\n| timeout | ring no answer timeout, in seconds.  <br>Defaults to 60. | no |\n| transcribe | a nested [transcribe](https://www.jambonz.org/docs/webhooks/transcribe) action, which will cause the call to be transcribed | no |"
+							},
+							"response": [
+								{
+									"name": "Create call (version 1)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"application_sid\": \"0d27aee6-d1e6-4707-bdde-1cc20b50ca88\",\n    \"from\": \"15083728399\",\n    \"to\": {\n        \"type\": \"phone\",\n        \"number\": \"15082084809\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "9351f46a-678c-43f5-b8a6-d4eb58d131af"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 11:53:31 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "46"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2e-lpaoyZLqrdm4rMezbbXyEs4u/h8\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sid\": \"6b4931df-436a-4bfe-864e-3513d2917c02\",\n    \"callId\": \"fb1893f3-b547-123c-1c99-0e24c2fb464d\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Create call (version 2)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"call_hook\": {\n        \"url\": \"https://public-apps.jambonz.us/hello-world\",\n        \"method\": \"POST\"\n    },\n    \"call_status_hook\": {\n        \"url\": \"https://public-apps.jambonz.us/call-status\",\n        \"method\": \"POST\"\n    },\n    \"from\": \"15083718299\",\n    \"to\": {\n        \"type\": \"phone\",\n        \"number\": \"15583084809\"\n    },\n    \"speech_synthesis_vendor\": \"google\",\n    \"speech_synthesis_language\": \"en-US\",\n    \"speech_synthesis_voice\": \"Wavenet-A\",\n    \"speech_recognizer_vendor\": \"Google\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"Calls"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										}
+									]
+								},
+								"description": "In this alternative version, the webhook is explicitly provided in the payload in place of an application_sid.\n\nNote that when an application_sid is NOT provided, you must explicitly specify the speech vendor properties in the payload (see example below)."
+							},
+							"response": [
+								{
+									"name": "Create call (version 2)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"call_hook\": {\n        \"url\": \"https://public-apps.jambonz.us/hello-world\",\n        \"method\": \"POST\"\n    },\n    \"call_status_hook\": {\n        \"url\": \"https://public-apps.jambonz.us/call-status\",\n        \"method\": \"POST\"\n    },\n    \"from\": \"15083728299\",\n    \"to\": {\n        \"type\": \"phone\",\n        \"number\": \"15083084809\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:00:14 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "46"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2e-YTd6HNcfnfGdsXt6eazWcSeUKsg\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sid\": \"65d1cefe-c21a-4f03-92c0-947d6a17fe01\",\n    \"callId\": \"fb1893f3-b547-123c-1c99-0e24c2fb464d\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Create call (version 3)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"call_hook\": \"https://public-apps.jambonz.us/hello-world\",\n    \"call_status_hook\":\"https://public-apps.jambonz.us/call-status\",\n    \"from\": \"15083778299\",\n    \"to\": {\n        \"type\": \"phone\",\n        \"number\": \"15089084809\"\n    },\n    \"speech_synthesis_vendor\": \"google\",\n    \"speech_synthesis_language\": \"en-US\",\n    \"speech_synthesis_voice\": \"Wavenet-A\",\n    \"speech_recognizer_vendor\": \"Google\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"Calls"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										}
+									]
+								},
+								"description": "In this alternative version, the a short form of the webhook is explicitly provided in the payload.\n\nNote that when an application_sid is NOT provided, you must explicitly specify the speech vendor properties in the payload (see example below)."
+							},
+							"response": [
+								{
+									"name": "Create call (version 3)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"call_hook\": \"https://public-apps.jambonz.us/hello-world\",\n    \"call_status_hook\":\"https://public-apps.jambonz.us/call-status\",\n    \"from\": \"15083728299\",\n    \"to\": {\n        \"type\": \"phone\",\n        \"number\": \"15083084809\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:01:38 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "46"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2e-VqA+F+KExXLNBcPIZ3UlOeJJmt0\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sid\": \"a4941f23-66b8-4b52-b495-94192adee7ec\",\n     \"callId\": \"fb1893f3-b547-123c-1c99-0e24c2fb464d\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Call - Live Call Control",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"record\": {\n        \"action\": \"stopCallRecording\",\n        \"siprecServerURL\": \"sip:srs@52.52.132.163\",\n        \"recordingID\": \"my-recording-id\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"Calls",
+										":call_sid"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "9351f46a-678c-43f5-b8a6-d4eb58d131af"
+										},
+										{
+											"key": "call_sid",
+											"value": "e5f55a92-ac6c-4a2b-bbaa-5527c361fad8"
+										}
+									]
+								},
+								"description": "This api allows you to manipulate a call that is in progress -- i.e., \"Live Call Control\".\n\nThe actions available are:\n- hangup a call\n- mute/unmute a party on a call\n- pause/resume the real-time audio stream provided via the [listen](https://www.jambonz.org/docs/webhooks/listen/) command\n- transfer one or both parties on a call to new application(s).  Note that you can provide a different application for each party (e.g. queue the called party while the calling party dials a new number)\n- play a whisper prompt to a party.\n- place or remove a party that is in conference on hold.\n- mute/unmute all non-moderators in a conference.\n\nGenerally, a single API call can only do one of the above operations.\n\nThe JSON payload may contain the properties described in the table below.\n\n| property      | description | when can this be used\n| ------------- |-------------| ---------------------|\n| call_hook | a new application to start executing on the call for the party associated with the call_sid | at any time a call is active |\n| child_call_hook | a new application to start executing on the call for the party associated with the child_call_sid | at any time a call is active and in a [dial](https://www.jambonz.org/docs/webhooks/dial/) verb|\n| call_status | Change the status of the call.  Possible values are 'completed' or 'no-answer' (the former terminates an answered call, the latter a call that is ringing) | at any time a call is in-progress or ringing |\n| conf_hold_status |Possible values are 'hold' or 'unhold'.  When playing a party on hold, a wait_hook can optionally be provided to play music or a message to the party while on hold.|  Only valid when the party is in a conference. |\n| conf_mute_status |Possible values are 'mute' or 'unmute'.  Note that this action applies to all non-morderators in the conference, not to a single member|  Only valid when the party is in a conference. |\n| listen_status | Change the status of a listen stream.  Possible values are 'pause' or 'resume'.  Pausing a stream maintains the websocket connection but will discontinue sending audio over the connection.  Resuming will start sending audio again.  This may be useful, for example, when a caller is providing confidential information that you do not want to appear in a recording. | only when a listen command is active on the call (may be nested in an active dial command) | \n| mute_status | Mute or unmute a call that is currently in a Dial verb.  Possible values are 'mute' or 'unmute'. Either party in a call may be modified, depending on the call_sid provided in the path of the request-uri. | only when a dial command is currently active on a call |\n| whisper | Play a mid-call whisper prompt to one of the parties on a call in progress.  The whisper prompt is provided in a play or say verb, as shown in the examples below.  The whisper may be played to either party on the call, depending on the call_sid provided in the path of the request-uri. The other party is briefly placed on hold while the prompt is played, and then reconnected to the other party afterwards.| only when a dial command is currently active on the call |\n| wait_hook | A relative or absolute url that can be supplied when placing a party that is in conference on hold.| Only when putting a party on conference hold |\n\nThe call_status, listen_status, and mute_status properties are mutually exclusive -- only one may be provided in the same request.\n\nThe whisper property may be provided alone, or together with a listen_status or mute_status property, in which case the whisper prompt is played after the listen_status or mute_status operation is complete.\n\nFinally, if call_hook is provided, then call_status_hook may also optionally be included.  This is used to specify a new callback to receive call status events.\n\nSuccess is indicated by a 204 response"
+							},
+							"response": [
+								{
+									"name": "Hangup call",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"call_status\": \"completed\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "b18382eb-ba2a-45fc-8cba-786e264904ec"
+												}
+											]
+										}
+									},
+									"status": "Accepted",
+									"code": 202,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:28:24 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "text/plain; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "8"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "x-powered-by",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "etag",
+											"value": "W/\"8-YaBXLEiT7zQxEyDYTILfiL6oPhE\""
+										}
+									],
+									"cookie": [],
+									"body": "Accepted"
+								},
+								{
+									"name": "Mute party",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"mute_status\": \"mute\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "b18382eb-ba2a-45fc-8cba-786e264904ec"
+												}
+											]
+										}
+									},
+									"status": "Accepted",
+									"code": 202,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:28:24 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "text/plain; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "8"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "x-powered-by",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "etag",
+											"value": "W/\"8-YaBXLEiT7zQxEyDYTILfiL6oPhE\""
+										}
+									],
+									"cookie": [],
+									"body": "Accepted"
+								},
+								{
+									"name": "Conference hold",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"conf_hold_status\": \"hold\",\n    \"wait_hook\": \"/conference/hold\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "b18382eb-ba2a-45fc-8cba-786e264904ec"
+												}
+											]
+										}
+									},
+									"status": "Accepted",
+									"code": 202,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:28:24 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "text/plain; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "8"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "x-powered-by",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "etag",
+											"value": "W/\"8-YaBXLEiT7zQxEyDYTILfiL6oPhE\""
+										}
+									],
+									"cookie": [],
+									"body": "Accepted"
+								},
+								{
+									"name": "Conference mute non-moderators",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"conf_mute_status\": \"mute\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "b18382eb-ba2a-45fc-8cba-786e264904ec"
+												}
+											]
+										}
+									},
+									"status": "Accepted",
+									"code": 202,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:28:24 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "text/plain; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "8"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "x-powered-by",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "etag",
+											"value": "W/\"8-YaBXLEiT7zQxEyDYTILfiL6oPhE\""
+										}
+									],
+									"cookie": [],
+									"body": "Accepted"
+								},
+								{
+									"name": "Conference unmute non-moderators",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"conf_mute_status\": \"unmute\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "b18382eb-ba2a-45fc-8cba-786e264904ec"
+												}
+											]
+										}
+									},
+									"status": "Accepted",
+									"code": 202,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:28:24 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "text/plain; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "8"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "x-powered-by",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "etag",
+											"value": "W/\"8-YaBXLEiT7zQxEyDYTILfiL6oPhE\""
+										}
+									],
+									"cookie": [],
+									"body": "Accepted"
+								},
+								{
+									"name": "Conference unhold",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"conf_hold_status\": \"unhold\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "b18382eb-ba2a-45fc-8cba-786e264904ec"
+												}
+											]
+										}
+									},
+									"status": "Accepted",
+									"code": 202,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:28:24 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "text/plain; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "8"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "x-powered-by",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "etag",
+											"value": "W/\"8-YaBXLEiT7zQxEyDYTILfiL6oPhE\""
+										}
+									],
+									"cookie": [],
+									"body": "Accepted"
+								},
+								{
+									"name": "Unmute party",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"mute_status\": \"mute\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "b18382eb-ba2a-45fc-8cba-786e264904ec"
+												}
+											]
+										}
+									},
+									"status": "Accepted",
+									"code": 202,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:28:24 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "text/plain; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "8"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "x-powered-by",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "etag",
+											"value": "W/\"8-YaBXLEiT7zQxEyDYTILfiL6oPhE\""
+										}
+									],
+									"cookie": [],
+									"body": "Accepted"
+								},
+								{
+									"name": "Play whisper prompt",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\"whisper\": {\n\t\t\"verb\": \"say\",\n\t\t\"text\": \"You have two minutes remaining on your call.\"\n\t}\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "e1577b29-3609-4d83-9ddd-8bd7f965b53c"
+												}
+											]
+										}
+									},
+									"status": "Accepted",
+									"code": 202,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:34:52 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "text/plain; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "8"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "x-powered-by",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "etag",
+											"value": "W/\"8-YaBXLEiT7zQxEyDYTILfiL6oPhE\""
+										}
+									],
+									"cookie": [],
+									"body": "Accepted"
+								},
+								{
+									"name": "Transfer party to new application",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"call_hook\": \"https://public-apps.jambonz.us/hello-world\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "7b827471-94bf-4eea-9342-d174f651a4a1"
+												}
+											]
+										}
+									},
+									"status": "Accepted",
+									"code": 202,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:38:54 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "text/plain; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "8"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "x-powered-by",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "etag",
+											"value": "W/\"8-YaBXLEiT7zQxEyDYTILfiL6oPhE\""
+										}
+									],
+									"cookie": [],
+									"body": "Accepted"
+								}
+							]
+						},
+						{
+							"name": "Delete Call",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"Calls",
+										":call_sid"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										},
+										{
+											"key": "call_sid",
+											"value": "a4941f23-66b8-4b52-b495-94192adee7ec"
+										}
+									]
+								},
+								"description": "Deletes a call.  After this action is done, any updates / Live Call Control operations will not be possible for this call.  \n\nSuccess is indicated by a 204 response\n\n> Note that deleting a call does not hang up the call, nor does it delete the call detail record for the call.  It merely removes it from the redis database"
+							},
+							"response": [
+								{
+									"name": "Delete Call",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Calls/:call_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Calls",
+												":call_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "call_sid",
+													"value": "a4941f23-66b8-4b52-b495-94192adee7ec"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 12:24:20 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"a-bAsFyilMr4Ra1hIU5PyoyFRunpI\""
+										}
+									],
+									"cookie": [],
+									"body": null
+								}
+							]
+						}
+					],
+					"description": "Calls that are active or recently ended (within 10 minutes) can be retrieved and managed via the api.  \n\n> Note: this api should not be used to retrieve call detail records.  For that, please use the /RecentCalls api"
+				},
+				{
+					"name": "RecentCalls",
+					"item": [
+						{
+							"name": "Get RecentCalls",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/RecentCalls?page=1&count=25&days=7",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"RecentCalls"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "25"
+										},
+										{
+											"key": "days",
+											"value": "7"
+										}
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										}
+									]
+								},
+								"description": "Call detail records are only kept in the system for 30 days.  As there could be a large number of CDRs, the api allows you to query pages of data at a time."
+							},
+							"response": [
+								{
+									"name": "Get RecentCalls",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/RecentCalls?page=1&count=25&days=7",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"RecentCalls"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "1"
+												},
+												{
+													"key": "count",
+													"value": "25"
+												},
+												{
+													"key": "days",
+													"value": "7"
+												}
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 03:34:28 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "3892"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"f34-JFKUgcRfYH0s0DlQKTNWfkWVFak\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"total\": 8,\n    \"page_size\": \"25\",\n    \"page\": \"1\",\n    \"data\": [\n        {\n            \"attempted_at\": \"2021-05-25T03:10:13.504Z\",\n            \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n            \"answered\": true,\n            \"answered_at\": \"2021-05-25T03:10:21.103Z\",\n            \"call_sid\": \"b5a66a30-6372-4b1e-a438-c43b069dfb47\",\n            \"direction\": \"outbound\",\n            \"duration\": 12,\n            \"from\": \"15083084809\",\n            \"host\": \"172.31.33.10\",\n            \"remote_host\": \"outbound.voxbone.com\",\n            \"sip_callid\": \"903f4797-37a9-123a-84b3-0285123e80eb\",\n            \"sip_status\": 200,\n            \"terminated_at\": \"2021-05-25T03:10:34.040Z\",\n            \"termination_reason\": \"caller hungup\",\n            \"to\": \"16137451576\",\n            \"trunk\": \"Voxbone\"\n        },\n        {\n            \"attempted_at\": \"2021-05-25T03:10:04.355Z\",\n            \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n            \"answered\": true,\n            \"answered_at\": \"2021-05-25T03:10:04.557Z\",\n            \"call_sid\": null,\n            \"direction\": \"inbound\",\n            \"duration\": 29,\n            \"from\": \"+15083084809\",\n            \"host\": \"172.31.33.10\",\n            \"remote_host\": \"54.172.60.3\",\n            \"sip_callid\": \"6348dda20d379b05de4d108b9ac0f3cb@0.0.0.0\",\n            \"sip_status\": 200,\n            \"terminated_at\": \"2021-05-25T03:10:34.031Z\",\n            \"termination_reason\": \"caller hungup\",\n            \"to\": \"+15083728299\",\n            \"trunk\": \"Twilio\"\n        },\n        {\n            \"attempted_at\": \"2021-05-25T03:09:44.256Z\",\n            \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n            \"answered\": true,\n            \"answered_at\": \"2021-05-25T03:09:51.008Z\",\n            \"call_sid\": \"8fc40cc5-f6ba-4752-8fc7-db2f770c441b\",\n            \"direction\": \"outbound\",\n            \"duration\": 10,\n            \"from\": \"15083084809\",\n            \"host\": \"172.31.33.10\",\n            \"remote_host\": \"outbound.voxbone.com\",\n            \"sip_callid\": \"7ec6343a-37a9-123a-84b3-0285123e80eb\",\n            \"sip_status\": 200,\n            \"terminated_at\": \"2021-05-25T03:10:01.737Z\",\n            \"termination_reason\": \"caller hungup\",\n            \"to\": \"16137451576\",\n            \"trunk\": \"Voxbone\"\n        },\n        {\n            \"attempted_at\": \"2021-05-25T03:09:35.065Z\",\n            \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n            \"answered\": true,\n            \"answered_at\": \"2021-05-25T03:09:35.218Z\",\n            \"call_sid\": null,\n            \"direction\": \"inbound\",\n            \"duration\": 26,\n            \"from\": \"+15083084809\",\n            \"host\": \"172.31.33.10\",\n            \"remote_host\": \"54.172.60.3\",\n            \"sip_callid\": \"40ef23917e852aa170310b80f15766bc@0.0.0.0\",\n            \"sip_status\": 200,\n            \"terminated_at\": \"2021-05-25T03:10:01.714Z\",\n            \"termination_reason\": \"caller hungup\",\n            \"to\": \"+15083728299\",\n            \"trunk\": \"Twilio\"\n        },\n        {\n            \"attempted_at\": \"2021-05-25T03:06:49.062Z\",\n            \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n            \"answered\": true,\n            \"answered_at\": \"2021-05-25T03:06:49.230Z\",\n            \"call_sid\": null,\n            \"direction\": \"inbound\",\n            \"duration\": 9,\n            \"from\": \"+15083084809\",\n            \"host\": \"172.31.33.10\",\n            \"remote_host\": \"54.172.60.3\",\n            \"sip_callid\": \"2c8991f358b424c11414baecbf51ea38@0.0.0.0\",\n            \"sip_status\": 200,\n            \"terminated_at\": \"2021-05-25T03:06:58.439Z\",\n            \"termination_reason\": \"called party hungup\",\n            \"to\": \"+15083728299\",\n            \"trunk\": \"Twilio\"\n        },\n        {\n            \"attempted_at\": \"2021-05-25T03:05:06.975Z\",\n            \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n            \"answered\": true,\n            \"answered_at\": \"2021-05-25T03:05:08.692Z\",\n            \"call_sid\": null,\n            \"direction\": \"inbound\",\n            \"duration\": 14,\n            \"from\": \"+15083084809\",\n            \"host\": \"172.31.33.10\",\n            \"remote_host\": \"54.172.60.3\",\n            \"sip_callid\": \"6e16729eb64292f2e08ea67057f785cc@0.0.0.0\",\n            \"sip_status\": 200,\n            \"terminated_at\": \"2021-05-25T03:05:22.874Z\",\n            \"termination_reason\": \"called party hungup\",\n            \"to\": \"+15083728299\",\n            \"trunk\": \"Twilio\"\n        },\n        {\n            \"attempted_at\": \"2021-05-25T03:01:42.989Z\",\n            \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n            \"answered\": true,\n            \"answered_at\": \"2021-05-25T03:01:44.689Z\",\n            \"call_sid\": null,\n            \"direction\": \"inbound\",\n            \"duration\": 14,\n            \"from\": \"15083084809\",\n            \"host\": \"172.31.32.10\",\n            \"remote_host\": \"81.201.82.45\",\n            \"sip_callid\": \"920PBU9DFL79L0U4RSMQNPSFPC@81.201.82.43\",\n            \"sip_status\": 200,\n            \"terminated_at\": \"2021-05-25T03:01:58.869Z\",\n            \"termination_reason\": \"called party hungup\",\n            \"to\": \"17162261128\",\n            \"trunk\": \"Voxbone\"\n        },\n        {\n            \"attempted_at\": \"2021-05-25T03:00:37.259Z\",\n            \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n            \"answered\": true,\n            \"answered_at\": \"2021-05-25T03:00:38.934Z\",\n            \"call_sid\": null,\n            \"direction\": \"inbound\",\n            \"duration\": 14,\n            \"from\": \"15083084809\",\n            \"host\": \"172.31.32.10\",\n            \"remote_host\": \"81.201.82.45\",\n            \"sip_callid\": \"8DMMVB5EIT6S7BOC3009TL97SG@81.201.82.107\",\n            \"sip_status\": 200,\n            \"terminated_at\": \"2021-05-25T03:00:53.103Z\",\n            \"termination_reason\": \"called party hungup\",\n            \"to\": \"17162261128\",\n            \"trunk\": \"Voxbone\"\n        }\n    ]\n}"
+								}
+							]
+						}
+					],
+					"description": "RecentCalls represent call detail records (CDRs) that are kept in the database.  Currently, 30 days of CDRs are retained in the time-series database."
+				},
+				{
+					"name": "SpeechCredentials",
+					"item": [
+						{
+							"name": "Get SpeechCredentials",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/SpeechCredentials",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"SpeechCredentials"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										}
+									]
+								},
+								"description": "Retrieve all SpeechCredentials associated with  your account"
+							},
+							"response": [
+								{
+									"name": "Get SpeechCredentials",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/SpeechCredentials",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"SpeechCredentials"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 01:25:28 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "3024"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"bd0-BJqSBZn5XC+NGGbx9f04SPr7H+E\""
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"speech_credential_sid\": \"a9d27e9e-a909-41d1-aef1-bf61e6148e23\",\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"vendor\": \"aws\",\n        \"use_for_tts\": 1,\n        \"use_for_stt\": 1,\n        \"last_used\": \"2021-05-07T23:48:49.000Z\",\n        \"last_tested\": \"2021-05-28T16:06:10.000Z\",\n        \"tts_tested_ok\": 0,\n        \"stt_tested_ok\": 0,\n        \"created_at\": \"2021-05-07T23:19:05.000Z\"\n    },\n    {\n        \"speech_credential_sid\": \"ee2f5954-6822-4baf-8039-ae6976394c6d\",\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"vendor\": \"google\",\n        \"use_for_tts\": 1,\n        \"use_for_stt\": 1,\n        \"last_used\": \"2021-05-25T03:06:49.000Z\",\n        \"last_tested\": \"2021-05-28T16:06:10.000Z\",\n        \"tts_tested_ok\": 1,\n        \"stt_tested_ok\": 1,\n        \"created_at\": \"2021-05-07T00:50:11.000Z\",\n        \"service_key\": \"{\\\"type\\\":\\\"service_account\\\",\\\"project_id\\\":\\\"inner-lightning-354000\\\", \\\"private_key_id\\\":\\\"*****\\\"}\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Get SpeechCredential",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/SpeechCredentials/:speech_credential_sid",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"SpeechCredentials",
+										":speech_credential_sid"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										},
+										{
+											"key": "speech_credential_sid",
+											"value": ""
+										}
+									]
+								},
+								"description": "Retrieve a single SpeechCredential"
+							},
+							"response": [
+								{
+									"name": "Get SpeechCredential",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/SpeechCredentials/:speech_credential_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"SpeechCredentials",
+												":speech_credential_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "speech_credential_sid",
+													"value": "a9d27e9e-a909-41d1-aef1-bf61e6148e23"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 01:29:49 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "422"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"1a6-5TzalFGkR/qAzLVqUDgCFr/6kuY\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"speech_credential_sid\": \"a9d27e9e-a909-41d1-aef1-bf61e6148e23\",\n    \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n    \"vendor\": \"aws\",\n    \"use_for_tts\": 1,\n    \"use_for_stt\": 1,\n    \"last_used\": \"2021-05-07T23:48:49.000Z\",\n    \"last_tested\": \"2021-05-28T16:06:10.000Z\",\n    \"tts_tested_ok\": 0,\n    \"stt_tested_ok\": 0,\n    \"created_at\": \"2021-05-07T23:19:05.000Z\",\n    \"access_key_id\": \"AKIAXXXXXXXXXXXXXXXXX\",\n    \"secret_access_key\": \"*******************************\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Test SpeechCredential",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/SpeechCredentials/:speech_credential_sid/test",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"SpeechCredentials",
+										":speech_credential_sid",
+										"test"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										},
+										{
+											"key": "speech_credential_sid",
+											"value": "49d36fb5-ac01-4e7a-ad8a-824033381afd"
+										}
+									]
+								},
+								"description": "Test a SpeechCredential.  This will cause the SpeechCredential to be retrieved and used in a simple text to speech and/or speech recognition request to the speech service.\n\n> Note: the SpeechCredential will only be tested for TTS or STT if it is indicated as being used for that purpose."
+							},
+							"response": [
+								{
+									"name": "Test SpeechCredential",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/SpeechCredentials/:speech_credential_sid/test",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"SpeechCredentials",
+												":speech_credential_sid",
+												"test"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "speech_credential_sid",
+													"value": "49d36fb5-ac01-4e7a-ad8a-824033381afd"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 03:30:12 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "45"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2d-nwYa/3XpxcQ/hNggxGnFlAqnG5A\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"tts\": {\n        \"status\": \"ok\"\n    },\n    \"stt\": {\n        \"status\": \"ok\"\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Create SpeechCredential",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"vendor\": \"aws\",\n\t\"access_key_id\": \"AKIXXXXXXXXXXXXX\",\n\t\"secret_access_key\": \"****************************\",\n\t\"use_for_tts\": true,\n\t\"use_for_stt\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/SpeechCredentials",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"SpeechCredentials"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										}
+									]
+								},
+								"description": "Create a SpeechCredential"
+							},
+							"response": [
+								{
+									"name": "Create SpeechCredential",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"vendor\": \"aws\",\n\t\"access_key_id\": \"AKIAXXXXXXXXXXXXXXXXXX\",\n\t\"secret_access_key\": \"************************************\",\n\t\"use_for_tts\": true,\n\t\"use_for_stt\": true\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/SpeechCredentials",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"SpeechCredentials"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 03:22:05 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "46"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2e-lbKoYaksqET/IzIH0vkuUplOSfM\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sid\": \"49d36fb5-ac01-4e7a-ad8a-824033381afd\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete SpeechCredential",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/SpeechCredentials/:speech_credential_sid",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"SpeechCredentials",
+										":speech_credential_sid"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										},
+										{
+											"key": "speech_credential_sid",
+											"value": "a9d27e9e-a909-41d1-aef1-bf61e6148e23"
+										}
+									]
+								},
+								"description": "Deletes a SpeechCredential.\n\nSuccess is indicated by a 204 response."
+							},
+							"response": [
+								{
+									"name": "Delete SpeechCredential",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/SpeechCredentials/:speech_credential_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"SpeechCredentials",
+												":speech_credential_sid"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												},
+												{
+													"key": "speech_credential_sid",
+													"value": "a9d27e9e-a909-41d1-aef1-bf61e6148e23"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 03:16:16 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"a-bAsFyilMr4Ra1hIU5PyoyFRunpI\""
+										}
+									],
+									"cookie": [],
+									"body": null
+								}
+							]
+						}
+					],
+					"description": "SpeechCredentials represent AWS or Google tokens that are associated with your account for use in speech synthesis and recognition operations.\n\n> Note: you are currently restricted to a max of two SpeechCredentials - one for AWS and one for Google"
+				},
+				{
+					"name": "VoipCarriers",
+					"item": [
+						{
+							"name": "Get VoipCarriers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/VoipCarriers",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"VoipCarriers"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										}
+									]
+								},
+								"description": "Retrieve all VoipCarriers associated with your account"
+							},
+							"response": [
+								{
+									"name": "Get VoipCarriers",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/VoipCarriers",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"VoipCarriers"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 01:50:16 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1605"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"645-HDq1BeJBY4+YWTTAMhQ2bbC00pY\""
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"voip_carrier_sid\": \"2661209f-df95-40ec-bcc5-7393ca84629f\",\n        \"name\": \"Simwood\",\n        \"description\": null,\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"service_provider_sid\": null,\n        \"application_sid\": null,\n        \"e164_leading_plus\": 1,\n        \"requires_register\": 0,\n        \"register_username\": \"your-simwood-auth-trunk-username\",\n        \"register_sip_realm\": null,\n        \"register_password\": \"your-password\",\n        \"tech_prefix\": null,\n        \"inbound_auth_username\": null,\n        \"inbound_auth_password\": null,\n        \"diversion\": null,\n        \"is_active\": 0,\n        \"created_at\": \"2021-05-07T02:52:00.000Z\"\n    },\n    {\n        \"voip_carrier_sid\": \"5647eeab-c5ee-4d4b-ac3a-8aa5605f71f5\",\n        \"name\": \"Twilio\",\n        \"description\": null,\n        \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n        \"service_provider_sid\": null,\n        \"application_sid\": \"98acd50a-9f25-42a6-8dbf-aadb400ddcf0\",\n        \"e164_leading_plus\": 1,\n        \"requires_register\": 0,\n        \"register_username\": \"your-twilio-credential-username\",\n        \"register_sip_realm\": null,\n        \"register_password\": \"your-twilio-credential-password\",\n        \"tech_prefix\": null,\n        \"inbound_auth_username\": null,\n        \"inbound_auth_password\": null,\n        \"diversion\": null,\n        \"is_active\": 1,\n        \"created_at\": \"2021-05-18T22:18:36.000Z\"\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "Get VoipCarrier",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/VoipCarriers/:voip_carrier_sid",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"VoipCarriers",
+										":voip_carrier_sid"
+									],
+									"variable": [
+										{
+											"key": "voip_carrier_sid",
+											"value": ""
+										}
+									]
+								},
+								"description": "Retrieve a single VoipCarrier"
+							},
+							"response": [
+								{
+									"name": "Get VoipCarrier",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/VoipCarriers/:voip_carrier_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"VoipCarriers",
+												":voip_carrier_sid"
+											],
+											"variable": [
+												{
+													"key": "voip_carrier_sid",
+													"value": "5647eeab-c5ee-4d4b-ac3a-8aa5605f71f5"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 28 May 2021 02:12:07 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "562"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"232-eKKKcbMlfMUCjoltClb79DC27SQ\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"voip_carrier_sid\": \"5647eeab-c5ee-4d4b-ac3a-8aa5605f71f5\",\n    \"name\": \"Twilio\",\n    \"account_sid\": \"5f8e8f60-4771-44cb-92a6-94ea66df0450\",\n    \"service_provider_sid\": null,\n    \"application_sid\": \"98acd50a-9f25-42a6-8dbf-aadb400ddcf0\",\n    \"e164_leading_plus\": 1,\n    \"requires_register\": 0,\n    \"register_username\": \"your-twilio-credential-username\",\n    \"register_sip_realm\": null,\n    \"register_password\": \"your-twilio-credential-password\",\n    \"tech_prefix\": null,\n    \"inbound_auth_username\": null,\n    \"inbound_auth_password\": null,\n    \"diversion\": null,\n    \"is_active\": 1,\n    \"created_at\": \"2021-05-18T22:18:36.000Z\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Create VoipCarrier",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"my carrier\",\n\t\"e164_leading_plus\": 1,\n\t\"application_sid\": null,\n\t\"requires_register\": 0,\n\t\"register_username\": null,\n\t\"register_password\": null,\n\t\"register_sip_realm\": null,\n\t\"tech_prefix\": null,\n\t\"diversion\": null,\n\t\"is_active\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/VoipCarriers",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"VoipCarriers"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+										}
+									]
+								},
+								"description": "Creates a new VoipCarrier that will be associated with your account"
+							},
+							"response": [
+								{
+									"name": "Create VoipCarrier",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"name\": \"my carrier\",\n\t\"e164_leading_plus\": 1,\n\t\"application_sid\": null,\n\t\"requires_register\": 0,\n\t\"register_username\": null,\n\t\"register_password\": null,\n\t\"register_sip_realm\": null,\n\t\"tech_prefix\": null,\n\t\"diversion\": null,\n\t\"is_active\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/VoipCarriers",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"VoipCarriers"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 02:16:13 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "46"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2e-3Xn6txoyxuAVP2FDy0W0OzTs1Z4\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sid\": \"3eff2e0b-9870-4cc0-aa96-363e703c37ab\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete VoipCarrier",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								},
+								"description": "Deletes a VoipCarrier.\n\nSuccess is indicated by a 204 response."
+							},
+							"response": [
+								{
+									"name": "Delete VoipCarrier",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/VoipCarriers/:voip_carrier_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"VoipCarriers",
+												":voip_carrier_sid"
+											],
+											"variable": [
+												{
+													"key": "voip_carrier_sid",
+													"value": "83917537-4218-41e0-8845-793bd1bd7460"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 28 May 2021 02:14:53 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"a-bAsFyilMr4Ra1hIU5PyoyFRunpI\""
+										}
+									],
+									"cookie": [],
+									"body": null
+								}
+							]
+						}
+					],
+					"description": "VoipCarriers represent SIP trunking providers that are associated with your account for use in placing and receiving PSTN calls."
+				},
+				{
+					"name": "SipGateways",
+					"item": [
+						{
+							"name": "Create a SipGateway",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"ipv4\": \"54.172.60.2\",\n\t\"port\": \"5060\",\n\t\"inbound\": true,\n\t\"outbound\": false,\n\t\"voip_carrier_sid\": \"c10a0579-1229-4000-9a52-aa4a519a210f\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/SipGateways",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"SipGateways"
+									]
+								},
+								"description": "Creates a new SipGateway that will be associated with a VoipCarrier"
+							},
+							"response": [
+								{
+									"name": "Create a SipGateway",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"ipv4\": \"54.172.60.2\",\n\t\"port\": \"5060\",\n\t\"inbound\": true,\n\t\"outbound\": false,\n\t\"voip_carrier_sid\": \"c10a0579-1229-4000-9a52-aa4a519a210f\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/SipGateways",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"SipGateways"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 13:13:06 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "46"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2e-TYw88YIrAoNvvtBuSPKcMGGXs7k\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sid\": \"a6576ff4-59af-47ae-9b55-46f28b2bf2f7\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete a SipGateway",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/SipGateways/:sip_gateway_sid",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"SipGateways",
+										":sip_gateway_sid"
+									],
+									"variable": [
+										{
+											"key": "sip_gateway_sid",
+											"value": "a6576ff4-59af-47ae-9b55-46f28b2bf2f7"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Delete a SipGateway",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/v1/SipGateways/:sip_gateway_sid",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"SipGateways",
+												":sip_gateway_sid"
+											],
+											"variable": [
+												{
+													"key": "sip_gateway_sid",
+													"value": "a6576ff4-59af-47ae-9b55-46f28b2bf2f7"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 30 May 2021 13:14:56 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"a-bAsFyilMr4Ra1hIU5PyoyFRunpI\""
+										}
+									],
+									"cookie": [],
+									"body": null
+								}
+							]
+						}
+					],
+					"description": "A SipGateway represents a single IP address or range of IPs that are associated with a VoipCarrier (e.g. the VoipCarrier places and receives calls from these IPs).\n\nWhen you create a VoipProvider, you need to also add the SipGateways for that provider in order for incoming calls to be properly classified and for outbound calls to be properly routed."
+				},
+				{
+					"name": "Messages",
+					"item": [
+						{
+							"name": "Create Message",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"from\": \"13053828550\",\n    \"to\": \"15083084809\",\n    \"text\": \"your one-time passcode is 38499\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/Accounts/:account_sid/Messages",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"Accounts",
+										":account_sid",
+										"Messages"
+									],
+									"variable": [
+										{
+											"key": "account_sid",
+											"value": "3e2c138a-8940-4804-bb4f-b2de70a91697"
+										}
+									]
+								},
+								"description": "Send an SMS. In order to send an SMS message you must have provisioned a VoipCarrier with smpp support enabled."
+							},
+							"response": [
+								{
+									"name": "Create Message",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"from\": \"14073071599\",\n    \"to\": \"15083084809\",\n    \"text\": \"your one-time passcode is 38499\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/v1/Accounts/:account_sid/Messages",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"v1",
+												"Accounts",
+												":account_sid",
+												"Messages"
+											],
+											"variable": [
+												{
+													"key": "account_sid",
+													"value": "5f8e8f60-4771-44cb-92a6-94ea66df0450"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Server",
+											"value": "nginx/1.14.2"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 31 May 2021 13:53:24 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "147"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"93-9r3ntEq8LQmZ2cDq6P9euOzsWVs\""
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sid\": \"6a00676b-7dac-48b4-b410-69e786d08806\",\n    \"providerResponse\": {\n        \"message_id\": \"4ad42dff-8543-4c7d-ad12-b4f4514d9724\",\n        \"carrier\": \"TelecomsXChange\"\n    }\n}"
+								}
+							]
+						}
+					],
+					"description": "SMS messages can be sent if you have added a VoipCarrier that supports smpp.\n\n> **NOTE: this feature is currently in beta.  Contact support@jambonz.org if you would like to be included in the beta testing of this feature.**"
+				}
+			],
+			"description": "The current API version is v1."
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{api_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
